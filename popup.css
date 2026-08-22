@@ -42,12 +42,30 @@ body {
   justify-content: space-between;
   padding: 12px 14px 10px;
 }
+.vd-hd-user { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.vd-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 1px var(--line);
+}
+.vd-hd-texts { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
 .vd-hd-title {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
+}
+.vd-account {
+  font-size: 12px;
+  color: var(--text-2);
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .vd-dot {
   width: 8px;

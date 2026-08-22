@@ -13,7 +13,10 @@ const els = {
   moreWrap: document.getElementById("vd-more-wrap"),
   more: document.getElementById("vd-more"),
   refresh: document.getElementById("vd-refresh"),
-  search: document.getElementById("vd-search-input")
+  search: document.getElementById("vd-search-input"),
+  avatar: document.getElementById("vd-avatar"),
+  account: document.getElementById("vd-account"),
+  fallbackDot: document.getElementById("vd-fallback-dot")
 };
 
 const state = {
@@ -24,7 +27,8 @@ const state = {
   clientVersion: "2.20240101.00.00",
   query: "",
   loading: false,
-  signedOut: false
+  signedOut: false,
+  account: { name: "", avatar: "", email: "" }
 };
 
 /* ── structure-agnostic JSON walkers ─────────────────────── */
@@ -63,6 +67,23 @@ const findContinuationToken = (node) => {
   for (const k of Object.keys(node)) {
     const t = findContinuationToken(node[k]);
     if (t) return t;
+  }
+  return null;
+};
+
+const findFirstByKey = (node, key) => {
+  if (!node || typeof node !== "object") return null;
+  if (Array.isArray(node)) {
+    for (const n of node) {
+      const r = findFirstByKey(n, key);
+      if (r) return r;
+    }
+    return null;
+  }
+  if (node[key]) return node[key];
+  for (const k of Object.keys(node)) {
+    const r = findFirstByKey(node[k], key);
+    if (r) return r;
   }
   return null;
 };
@@ -167,7 +188,66 @@ const loadInitial = async () => {
   collectVideoRenderers(data, renderers);
   state.signedOut = renderers.length === 0 && findSignedOut(data);
   state.continuation = findContinuationToken(data);
+  // topbar avatar as a fallback when the account_menu endpoint is unavailable
+  const avatarBtn = findFirstByKey(data, "avatarButtonViewModel");
+  const topbarAvatar = avatarBtn?.avatar?.sources?.slice(-1)[0]?.url || "";
+  if (topbarAvatar) state.account.avatar = topbarAvatar;
   return pushItems(renderers);
+};
+
+/* account name + avatar via the signed-in account menu endpoint */
+const loadAccount = async () => {
+  try {
+    const url =
+      "https://www.youtube.com/youtubei/v1/account/account_menu?key=" +
+      encodeURIComponent(state.apiKey) +
+      "&prettyPrint=false";
+    const res = await fetch(url, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        context: {
+          client: {
+            clientName: "WEB",
+            clientVersion: state.clientVersion,
+            hl: "zh-CN",
+            gl: "TW"
+          }
+        },
+        deviceTheme: "DEVICE_THEME_PRESET",
+        userInterfaceTheme: "USER_INTERFACE_THEME_DARK"
+      })
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    const hdr = findFirstByKey(data, "activeAccountHeaderRenderer");
+    if (!hdr) return;
+    const name =
+      hdr.accountName?.simpleText ||
+      hdr.accountName?.runs?.map((r) => r.text).join("") || "";
+    const avatar = hdr.accountPhoto?.thumbnails?.slice(-1)[0]?.url || "";
+    const email = hdr.email?.simpleText || "";
+    if (name) state.account.name = name;
+    if (avatar) state.account.avatar = avatar;
+    if (email) state.account.email = email;
+  } catch (err) {
+    console.warn("[VideoDeck] account_menu failed:", err);
+  }
+};
+
+const renderAccount = () => {
+  const { name, avatar, email } = state.account;
+  if (avatar) {
+    els.avatar.src = avatar;
+    els.avatar.classList.remove("hidden");
+    els.fallbackDot.classList.add("hidden");
+    if (email) els.avatar.title = email;
+  }
+  if (name) {
+    els.account.textContent = name;
+    els.account.classList.remove("hidden");
+  }
 };
 
 const findSignedOutFromHtml = (html) =>
@@ -347,6 +427,7 @@ const init = async (isRefresh) => {
   }
   setLoading(false);
   render();
+  loadAccount().then(renderAccount);
 };
 
 init(false);

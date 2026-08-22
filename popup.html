@@ -7,10 +7,13 @@
 </head>
 <body>
   <header class="vd-hd">
-    <div class="vd-hd-title">
-      <span class="vd-dot"></span>
-      <span>观看记录</span>
-      <span id="vd-count" class="vd-count"></span>
+    <div class="vd-hd-user">
+      <span id="vd-fallback-dot" class="vd-dot"></span>
+      <img id="vd-avatar" class="vd-avatar hidden" alt="" />
+      <div class="vd-hd-texts">
+        <div class="vd-hd-title">观看记录 <span id="vd-count" class="vd-count"></span></div>
+        <div id="vd-account" class="vd-account hidden"></div>
+      </div>
     </div>
     <button id="vd-refresh" class="vd-icon-btn" title="刷新">⟳</button>
   </header>
