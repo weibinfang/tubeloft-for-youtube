@@ -220,9 +220,69 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
 
   var css_248z$1 = "[tyt-tab] #right-tabs #material-tabs,[tyt-tab^=\"#\"] #right-tabs #material-tabs{border-radius:12px 12px 0 0!important}ytd-watch-flexy #right-tabs .tab-content{border-radius:0 0 12px 12px!important}ytd-watch-flexy[is-two-columns_] #right-tabs .tab-content-cld{scrollbar-color:rgba(0,0,0,.25) transparent;scrollbar-width:thin}ytd-watch-flexy[is-two-columns_] #right-tabs .tab-content-cld::-webkit-scrollbar{width:4px}ytd-watch-flexy[is-two-columns_] #right-tabs .tab-content-cld::-webkit-scrollbar-thumb{background-color:rgba(0,0,0,.25);border-radius:4px}ytd-watch-flexy[is-two-columns_] #right-tabs .tab-content-cld::-webkit-scrollbar-track{background:transparent}";
 
+  // VideoDeck: pill-style sidebar tab bar. Appended after the legacy Material
+  // tab CSS so equal-specificity !important rules here win the cascade.
+  // Colors ride on YouTube CSS variables, so light/dark follows the site theme.
+  const css_vd_tabs = `
+    [tyt-tab] #right-tabs #material-tabs,
+    #right-tabs #material-tabs {
+      border: 0 !important;
+      border-radius: 999px !important;
+      background: var(--yt-spec-badge-chip-background, rgba(255, 255, 255, 0.08));
+      padding: 4px !important;
+      gap: 2px;
+    }
+    html:not([dark]) #right-tabs #material-tabs {
+      background: rgba(0, 0, 0, 0.05);
+    }
+    ytd-watch-flexy #right-tabs .tab-btn[tyt-tab-content] {
+      border: 0 !important;
+      border-bottom: 0 !important;
+      border-radius: 999px !important;
+      background-color: transparent !important;
+      color: var(--yt-spec-text-secondary, #aaa) !important;
+      text-transform: none !important;
+      font-size: 13px !important;
+      font-weight: 500 !important;
+      line-height: 20px !important;
+      letter-spacing: normal !important;
+      padding: 8px 14px !important;
+      transition: background-color 0.18s ease, color 0.18s ease !important;
+    }
+    ytd-watch-flexy #right-tabs .tab-btn[tyt-tab-content] > svg {
+      height: 16px !important;
+      width: 16px !important;
+      opacity: 0.7 !important;
+    }
+    ytd-watch-flexy #right-tabs .tab-btn[tyt-tab-content]:not(.active):hover {
+      background-color: var(--yt-spec-badge-chip-background-hover, rgba(255, 255, 255, 0.14)) !important;
+      color: var(--yt-spec-text-primary, #f1f1f1) !important;
+    }
+    html:not([dark]) ytd-watch-flexy #right-tabs .tab-btn[tyt-tab-content]:not(.active):hover {
+      background-color: rgba(0, 0, 0, 0.08) !important;
+      color: var(--yt-spec-text-primary, #0f0f0f) !important;
+    }
+    ytd-watch-flexy #right-tabs .tab-btn[tyt-tab-content].active {
+      background-color: var(--yt-spec-text-primary, #f1f1f1) !important;
+      color: var(--yt-spec-general-background-a, #0f0f0f) !important;
+    }
+    ytd-watch-flexy #right-tabs .tab-btn[tyt-tab-content].active > svg {
+      opacity: 1 !important;
+    }
+    ytd-watch-flexy[tyt-comment-disabled] #right-tabs .tab-btn[tyt-tab-content="#tab-comments"] {
+      color: var(--yt-spec-text-disabled, #909090) !important;
+      background-color: transparent !important;
+    }
+    ytd-watch-flexy #right-tabs .tab-content {
+      border: 0 !important;
+      border-radius: 12px !important;
+      margin-top: 8px;
+    }
+  `;
+
   const VAL_ROUNDED_A1 = 12;
   const styles = {
-    main: css_248z$2.replace("${VAL_ROUNDED_A1}", VAL_ROUNDED_A1) + css_248z$1
+    main: css_248z$2.replace("${VAL_ROUNDED_A1}", VAL_ROUNDED_A1) + css_248z$1 + css_vd_tabs
   };
 
   const StorageUtil = {
