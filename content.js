@@ -220,22 +220,47 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
 
   var css_248z$1 = "[tyt-tab] #right-tabs #material-tabs,[tyt-tab^=\"#\"] #right-tabs #material-tabs{border-radius:12px 12px 0 0!important}ytd-watch-flexy #right-tabs .tab-content{border-radius:0 0 12px 12px!important}ytd-watch-flexy[is-two-columns_] #right-tabs .tab-content-cld{scrollbar-color:rgba(0,0,0,.25) transparent;scrollbar-width:thin}ytd-watch-flexy[is-two-columns_] #right-tabs .tab-content-cld::-webkit-scrollbar{width:4px}ytd-watch-flexy[is-two-columns_] #right-tabs .tab-content-cld::-webkit-scrollbar-thumb{background-color:rgba(0,0,0,.25);border-radius:4px}ytd-watch-flexy[is-two-columns_] #right-tabs .tab-content-cld::-webkit-scrollbar-track{background:transparent}";
 
-  // VideoDeck: pill-style sidebar tab bar. Appended after the legacy Material
-  // tab CSS so equal-specificity !important rules here win the cascade.
-  // Colors ride on YouTube CSS variables, so light/dark follows the site theme.
+  // VideoDeck: animated sidebar tab bar. A JS-driven sliding pill indicator
+  // (see the controller near the bottom of this file) moves between tabs with
+  // a spring easing; the container is a glass chip and tab content fades in.
   const css_vd_tabs = `
     [tyt-tab] #right-tabs #material-tabs,
     #right-tabs #material-tabs {
-      border: 0 !important;
+      border: 1px solid rgba(255, 255, 255, 0.08) !important;
       border-radius: 999px !important;
       background: var(--yt-spec-badge-chip-background, rgba(255, 255, 255, 0.08));
+      backdrop-filter: blur(12px) saturate(1.5);
+      -webkit-backdrop-filter: blur(12px) saturate(1.5);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 2px 10px rgba(0, 0, 0, 0.25) !important;
       padding: 4px !important;
       gap: 2px;
     }
     html:not([dark]) #right-tabs #material-tabs {
-      background: rgba(0, 0, 0, 0.05);
+      border-color: rgba(0, 0, 0, 0.06) !important;
+      background: rgba(0, 0, 0, 0.04);
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05), 0 2px 10px rgba(0, 0, 0, 0.08) !important;
+    }
+    #vd-tab-indicator {
+      position: absolute;
+      top: 4px;
+      bottom: 4px;
+      left: 0;
+      border-radius: 999px;
+      background: var(--yt-spec-text-primary, #f1f1f1);
+      box-shadow: 0 2px 14px rgba(255, 255, 255, 0.28), 0 1px 3px rgba(0, 0, 0, 0.4);
+      transform: translateX(0);
+      transition: transform 0.38s cubic-bezier(0.34, 1.3, 0.4, 1), width 0.38s cubic-bezier(0.34, 1.3, 0.4, 1);
+      will-change: transform, width;
+      z-index: 0;
+      pointer-events: none;
+    }
+    html:not([dark]) #vd-tab-indicator {
+      background: var(--yt-spec-text-primary, #0f0f0f);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
     }
     ytd-watch-flexy #right-tabs .tab-btn[tyt-tab-content] {
+      position: relative;
+      z-index: 1;
       border: 0 !important;
       border-bottom: 0 !important;
       border-radius: 999px !important;
@@ -247,36 +272,39 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
       line-height: 20px !important;
       letter-spacing: normal !important;
       padding: 8px 14px !important;
-      transition: background-color 0.18s ease, color 0.18s ease !important;
+      transition: color 0.2s ease !important;
     }
     ytd-watch-flexy #right-tabs .tab-btn[tyt-tab-content] > svg {
       height: 16px !important;
       width: 16px !important;
       opacity: 0.7 !important;
+      transition: transform 0.3s cubic-bezier(0.34, 1.5, 0.5, 1), opacity 0.2s ease !important;
     }
     ytd-watch-flexy #right-tabs .tab-btn[tyt-tab-content]:not(.active):hover {
-      background-color: var(--yt-spec-badge-chip-background-hover, rgba(255, 255, 255, 0.14)) !important;
       color: var(--yt-spec-text-primary, #f1f1f1) !important;
     }
-    html:not([dark]) ytd-watch-flexy #right-tabs .tab-btn[tyt-tab-content]:not(.active):hover {
-      background-color: rgba(0, 0, 0, 0.08) !important;
-      color: var(--yt-spec-text-primary, #0f0f0f) !important;
-    }
     ytd-watch-flexy #right-tabs .tab-btn[tyt-tab-content].active {
-      background-color: var(--yt-spec-text-primary, #f1f1f1) !important;
       color: var(--yt-spec-general-background-a, #0f0f0f) !important;
+      font-weight: 600 !important;
     }
     ytd-watch-flexy #right-tabs .tab-btn[tyt-tab-content].active > svg {
       opacity: 1 !important;
+      transform: scale(1.15) !important;
     }
     ytd-watch-flexy[tyt-comment-disabled] #right-tabs .tab-btn[tyt-tab-content="#tab-comments"] {
       color: var(--yt-spec-text-disabled, #909090) !important;
-      background-color: transparent !important;
     }
     ytd-watch-flexy #right-tabs .tab-content {
       border: 0 !important;
       border-radius: 12px !important;
       margin-top: 8px;
+    }
+    ytd-watch-flexy #right-tabs .tab-content-cld:not(.tab-content-hidden) {
+      animation: vdTabFadeUp 0.28s ease;
+    }
+    @keyframes vdTabFadeUp {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   `;
 
@@ -1465,6 +1493,50 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
     const sourceURLMainCSS = "debug://tabview-youtube/tabview.main.css";
     style.textContent = `${styles["main"].trim()}${"\n\n"}/*# sourceURL=${sourceURLMainCSS} */${"\n"}`;
     document.documentElement.appendChild(style);
+  })();
+
+  // VideoDeck: sliding pill indicator for the sidebar tab bar. The TabView
+  // engine toggles `.active` on the tab buttons; this controller mirrors that
+  // state onto a single floating pill inside #material-tabs and animates it
+  // between tabs (spring easing handled by the #vd-tab-indicator CSS).
+  (() => {
+    const setupTabIndicator = () => {
+      const tabs = document.querySelector("#right-tabs #material-tabs");
+      if (!tabs) return false;
+      if (document.getElementById("vd-tab-indicator")) return true;
+      const indicator = document.createElement("div");
+      indicator.id = "vd-tab-indicator";
+      tabs.appendChild(indicator);
+      const position = (animate) => {
+        const active = tabs.querySelector(".tab-btn.active:not(.tab-btn-hidden)");
+        const target = active || tabs.querySelector(".tab-btn:not(.tab-btn-hidden)");
+        if (!target) return;
+        const tr = target.getBoundingClientRect();
+        if (!tr.width) return;
+        const cr = tabs.getBoundingClientRect();
+        if (animate === false) indicator.style.transition = "none";
+        indicator.style.width = `${tr.width}px`;
+        indicator.style.transform = `translateX(${tr.left - cr.left - tabs.clientLeft}px)`;
+        if (animate === false) {
+          requestAnimationFrame(() => {
+            indicator.style.transition = "";
+          });
+        }
+      };
+      position(false);
+      new MutationObserver(() => position()).observe(tabs, {
+        subtree: true,
+        attributes: true,
+        attributeFilter: ["class"]
+      });
+      window.addEventListener("resize", () => position(), { passive: true });
+      return true;
+    };
+    setInterval(() => {
+      if (!document.getElementById("vd-tab-indicator")) {
+        setupTabIndicator();
+      }
+    }, 600);
   })();
 
   (async () => {
