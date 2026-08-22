@@ -191,6 +191,7 @@ body {
   font-size: 13px;
   line-height: 1.7;
 }
+.vd-state:empty { display: none; }
 .vd-state .vd-err { color: #ff6d6d; }
 .vd-state button {
   margin-top: 10px;
