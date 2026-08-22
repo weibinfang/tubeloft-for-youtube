@@ -226,18 +226,20 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
   const css_vd_tabs = `
     [tyt-tab] #right-tabs #material-tabs,
     #right-tabs #material-tabs {
-      border: 1px solid rgba(255, 255, 255, 0.08) !important;
+      border: 1px solid rgba(127, 127, 127, 0.15) !important;
       border-radius: 999px !important;
-      background: var(--yt-spec-badge-chip-background, rgba(255, 255, 255, 0.08));
+      background: var(--yt-spec-badge-chip-background, rgba(127, 127, 127, 0.12));
       backdrop-filter: blur(12px) saturate(1.5);
       -webkit-backdrop-filter: blur(12px) saturate(1.5);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 2px 10px rgba(0, 0, 0, 0.25) !important;
       padding: 4px !important;
       gap: 2px;
     }
-    html:not([dark]) #right-tabs #material-tabs {
-      border-color: rgba(0, 0, 0, 0.06) !important;
-      background: rgba(0, 0, 0, 0.04);
+    #right-tabs #material-tabs[data-vd-theme="dark"] {
+      border-color: rgba(255, 255, 255, 0.08) !important;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06), 0 2px 10px rgba(0, 0, 0, 0.25) !important;
+    }
+    #right-tabs #material-tabs[data-vd-theme="light"] {
+      border-color: rgba(0, 0, 0, 0.08) !important;
       box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05), 0 2px 10px rgba(0, 0, 0, 0.08) !important;
     }
     #vd-tab-indicator {
@@ -246,17 +248,19 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
       bottom: 4px;
       left: 0;
       border-radius: 999px;
-      background: var(--yt-spec-text-primary, #f1f1f1);
-      box-shadow: 0 2px 14px rgba(255, 255, 255, 0.28), 0 1px 3px rgba(0, 0, 0, 0.4);
       transform: translateX(0);
       transition: transform 0.38s cubic-bezier(0.34, 1.3, 0.4, 1), width 0.38s cubic-bezier(0.34, 1.3, 0.4, 1);
       will-change: transform, width;
       z-index: 0;
       pointer-events: none;
     }
-    html:not([dark]) #vd-tab-indicator {
-      background: var(--yt-spec-text-primary, #0f0f0f);
-      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+    #right-tabs #material-tabs[data-vd-theme="dark"] #vd-tab-indicator {
+      background: #f1f1f1;
+      box-shadow: 0 2px 14px rgba(255, 255, 255, 0.25), 0 1px 3px rgba(0, 0, 0, 0.4);
+    }
+    #right-tabs #material-tabs[data-vd-theme="light"] #vd-tab-indicator {
+      background: #272727;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.22), 0 1px 3px rgba(0, 0, 0, 0.15);
     }
     ytd-watch-flexy #right-tabs .tab-btn[tyt-tab-content] {
       position: relative;
@@ -283,8 +287,13 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
     ytd-watch-flexy #right-tabs .tab-btn[tyt-tab-content]:not(.active):hover {
       color: var(--yt-spec-text-primary, #f1f1f1) !important;
     }
+    ytd-watch-flexy #right-tabs #material-tabs[data-vd-theme="dark"] .tab-btn[tyt-tab-content].active {
+      color: #0f0f0f !important;
+    }
+    ytd-watch-flexy #right-tabs #material-tabs[data-vd-theme="light"] .tab-btn[tyt-tab-content].active {
+      color: #ffffff !important;
+    }
     ytd-watch-flexy #right-tabs .tab-btn[tyt-tab-content].active {
-      color: var(--yt-spec-general-background-a, #0f0f0f) !important;
       font-weight: 600 !important;
     }
     ytd-watch-flexy #right-tabs .tab-btn[tyt-tab-content].active > svg {
@@ -1500,10 +1509,33 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
   // state onto a single floating pill inside #material-tabs and animates it
   // between tabs (spring easing handled by the #vd-tab-indicator CSS).
   (() => {
+    // 2026 YouTube no longer sets html[dark], so light/dark is detected by
+    // sampling the computed --yt-spec-text-primary luminance instead.
+    const detectTheme = () => {
+      let v = getComputedStyle(document.documentElement).getPropertyValue("--yt-spec-text-primary").trim();
+      if (!v) v = getComputedStyle(document.body).color || "";
+      let m = v.match(/#([0-9a-f]{6})/i) || v.match(/#([0-9a-f]{3})/i);
+      let r = -1, g = -1, b = -1;
+      if (m) {
+        const h = m[1].length === 3 ? m[1].split("").map((c) => c + c).join("") : m[1];
+        r = parseInt(h.slice(0, 2), 16);
+        g = parseInt(h.slice(2, 4), 16);
+        b = parseInt(h.slice(4, 6), 16);
+      } else {
+        m = v.match(/rgba?\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)/);
+        if (m) {
+          r = +m[1]; g = +m[2]; b = +m[3];
+        }
+      }
+      if (r < 0) return "dark";
+      // bright text-primary means dark theme
+      return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255 > 0.5 ? "dark" : "light";
+    };
     const setupTabIndicator = () => {
       const tabs = document.querySelector("#right-tabs #material-tabs");
       if (!tabs) return false;
       if (document.getElementById("vd-tab-indicator")) return true;
+      tabs.setAttribute("data-vd-theme", detectTheme());
       const indicator = document.createElement("div");
       indicator.id = "vd-tab-indicator";
       tabs.appendChild(indicator);
@@ -1533,8 +1565,15 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
       return true;
     };
     setInterval(() => {
+      const tabs = document.querySelector("#right-tabs #material-tabs");
+      if (!tabs) return;
       if (!document.getElementById("vd-tab-indicator")) {
         setupTabIndicator();
+        return;
+      }
+      const theme = detectTheme();
+      if (tabs.getAttribute("data-vd-theme") !== theme) {
+        tabs.setAttribute("data-vd-theme", theme);
       }
     }, 600);
   })();
