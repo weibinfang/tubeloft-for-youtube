@@ -1,0 +1,13 @@
+# macOS
+.DS_Store
+
+# Node / tooling (not used today, future-proof)
+node_modules/
+
+# migration / one-shot build scripts (reference the original userscript
+# outside this repo; kept locally but not part of the product)
+build/
+
+# editor
+.vscode/
+.idea/
