@@ -1,0 +1,199 @@
+/* VideoDeck popup — matches the extension's glass / chip design system */
+:root {
+  color-scheme: dark light;
+  --bg: #0f0f0f;
+  --panel: #1c1c1c;
+  --panel-hover: #262626;
+  --text: #f1f1f1;
+  --text-2: #9a9a9a;
+  --line: rgba(255, 255, 255, 0.1);
+  --accent: #ff0033;
+  --glass: rgba(255, 255, 255, 0.07);
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #ffffff;
+    --panel: #f7f7f7;
+    --panel-hover: #ededed;
+    --text: #0f0f0f;
+    --text-2: #606060;
+    --line: rgba(0, 0, 0, 0.1);
+    --glass: rgba(0, 0, 0, 0.05);
+  }
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  width: 396px;
+  max-height: 580px;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Roboto", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+  font-size: 13px;
+}
+
+/* ── header ─────────────────────────────── */
+.vd-hd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px 10px;
+}
+.vd-hd-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.vd-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px rgba(255, 0, 51, 0.6);
+}
+.vd-count { color: var(--text-2); font-size: 12px; font-weight: 400; }
+.vd-icon-btn {
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-2);
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.vd-icon-btn:hover { background: var(--glass); color: var(--text); }
+.vd-icon-btn.spin { animation: vdspin 0.8s linear infinite; }
+@keyframes vdspin { to { transform: rotate(360deg); } }
+
+/* ── search ─────────────────────────────── */
+.vd-search { padding: 0 14px 10px; }
+.vd-search input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--glass);
+  color: var(--text);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+.vd-search input:focus { border-color: var(--text-2); }
+.vd-search input::placeholder { color: var(--text-2); }
+
+/* ── list ───────────────────────────────── */
+.vd-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 8px 8px;
+  min-height: 120px;
+  max-height: 470px;
+}
+
+.vd-item {
+  display: flex;
+  gap: 10px;
+  padding: 7px 6px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.13s ease;
+}
+.vd-item:hover { background: var(--panel-hover); }
+
+.vd-thumb {
+  position: relative;
+  flex-shrink: 0;
+  width: 132px;
+  height: 74px;
+  border-radius: 9px;
+  overflow: hidden;
+  background: var(--panel);
+}
+.vd-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.vd-dur {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  padding: 1px 5px;
+  border-radius: 5px;
+  background: rgba(0, 0, 0, 0.82);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.vd-meta { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; gap: 4px; }
+.vd-title {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 17px;
+}
+.vd-sub { color: var(--text-2); font-size: 12px; line-height: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vd-sub .vd-when { color: var(--text); opacity: 0.85; }
+
+/* ── load more / states ─────────────────── */
+.vd-more-wrap { padding: 4px 14px 10px; }
+.vd-more {
+  width: 100%;
+  padding: 9px 0;
+  border: 0;
+  border-radius: 999px;
+  background: var(--glass);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.vd-more:hover { background: var(--panel-hover); }
+.vd-more:disabled { opacity: 0.55; cursor: default; }
+
+.vd-state {
+  padding: 36px 20px;
+  text-align: center;
+  color: var(--text-2);
+  font-size: 13px;
+  line-height: 1.7;
+}
+.vd-state .vd-err { color: #ff6d6d; }
+.vd-state button {
+  margin-top: 10px;
+  padding: 7px 20px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--glass);
+  color: var(--text);
+  cursor: pointer;
+}
+.hidden { display: none !important; }
+
+/* skeleton shimmer while loading */
+.vd-skel {
+  display: flex;
+  gap: 10px;
+  padding: 8px 6px;
+}
+.vd-skel .bar { border-radius: 9px; background: linear-gradient(100deg, var(--panel) 40%, var(--panel-hover) 50%, var(--panel) 60%); background-size: 200% 100%; animation: vdshimmer 1.2s infinite; }
+.vd-skel .b-thumb { width: 132px; height: 74px; flex-shrink: 0; }
+.vd-skel .b-lines { flex: 1; display: flex; flex-direction: column; gap: 8px; justify-content: center; }
+.vd-skel .b-line { height: 13px; width: 90%; }
+.vd-skel .b-line.short { width: 55%; }
+@keyframes vdshimmer { to { background-position: -200% 0; } }

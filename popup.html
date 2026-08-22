@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>VideoDeck · 观看记录</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header class="vd-hd">
+    <div class="vd-hd-title">
+      <span class="vd-dot"></span>
+      <span>观看记录</span>
+      <span id="vd-count" class="vd-count"></span>
+    </div>
+    <button id="vd-refresh" class="vd-icon-btn" title="刷新">⟳</button>
+  </header>
+
+  <div class="vd-search">
+    <input id="vd-search-input" type="search" placeholder="搜索已加载的记录…" />
+  </div>
+
+  <main id="vd-list" class="vd-list" aria-live="polite"></main>
+
+  <div id="vd-more-wrap" class="vd-more-wrap hidden">
+    <button id="vd-more" class="vd-more">加载更多</button>
+  </div>
+
+  <div id="vd-state" class="vd-state"></div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
