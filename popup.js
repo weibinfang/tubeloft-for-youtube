@@ -190,50 +190,97 @@ const loadInitial = async () => {
   state.continuation = findContinuationToken(data);
   // topbar avatar as a fallback when the account_menu endpoint is unavailable
   const avatarBtn = findFirstByKey(data, "avatarButtonViewModel");
-  const topbarAvatar = avatarBtn?.avatar?.sources?.slice(-1)[0]?.url || "";
-  if (topbarAvatar) state.account.avatar = topbarAvatar;
+  if (avatarBtn) {
+    const topbarAvatar = findAvatarUrl(avatarBtn) || findAvatarUrl(data.topbar);
+    if (topbarAvatar) state.account.avatar = topbarAvatar;
+  } else {
+    const topbarAvatar = findAvatarUrl(data.topbar);
+    if (topbarAvatar) state.account.avatar = topbarAvatar;
+  }
   return pushItems(renderers);
 };
 
-/* account name + avatar via the signed-in account menu endpoint */
-const loadAccount = async () => {
-  try {
-    const url =
-      "https://www.youtube.com/youtubei/v1/account/account_menu?key=" +
-      encodeURIComponent(state.apiKey) +
-      "&prettyPrint=false";
-    const res = await fetch(url, {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        context: {
-          client: {
-            clientName: "WEB",
-            clientVersion: state.clientVersion,
-            hl: "zh-CN",
-            gl: "TW"
-          }
-        },
-        deviceTheme: "DEVICE_THEME_PRESET",
-        userInterfaceTheme: "USER_INTERFACE_THEME_DARK"
-      })
-    });
-    if (!res.ok) return;
-    const data = await res.json();
-    const hdr = findFirstByKey(data, "activeAccountHeaderRenderer");
-    if (!hdr) return;
-    const name =
-      hdr.accountName?.simpleText ||
-      hdr.accountName?.runs?.map((r) => r.text).join("") || "";
-    const avatar = hdr.accountPhoto?.thumbnails?.slice(-1)[0]?.url || "";
-    const email = hdr.email?.simpleText || "";
-    if (name) state.account.name = name;
-    if (avatar) state.account.avatar = avatar;
-    if (email) state.account.email = email;
-  } catch (err) {
-    console.warn("[VideoDeck] account_menu failed:", err);
+/* shape-proof avatar URL finder: first googleusercontent / yt3 image URL in a subtree */
+const findAvatarUrl = (node) => {
+  if (!node || typeof node === "object") {
+    if (Array.isArray(node)) {
+      for (const n of node) {
+        const u = findAvatarUrl(n);
+        if (u) return u;
+      }
+      return "";
+    }
+    for (const k of Object.keys(node)) {
+      const u = findAvatarUrl(node[k]);
+      if (u) return u;
+    }
+    return "";
   }
+  if (typeof node !== "string") return "";
+  const s = node.replace(/^\/\//, "https://");
+  return /https:\/\/(yt3|lh\d|\w+-\w+)?\.?(ggpht|googleusercontent)\.com\//.test(s) && !/=s(\d+)-c-k-no$/.test(s.split("?")[0]) ? s : "";
+};
+
+/* account name + avatar via the signed-in account menu endpoints */
+const loadAccount = async () => {
+  const context = {
+    context: {
+      client: {
+        clientName: "WEB",
+        clientVersion: state.clientVersion,
+        hl: "zh-CN",
+        gl: "TW"
+      }
+    },
+    deviceTheme: "DEVICE_THEME_PRESET",
+    userInterfaceTheme: "USER_INTERFACE_THEME_DARK"
+  };
+  const endpoints = [
+    "https://www.youtube.com/youtubei/v1/account/get_account_menu",
+    "https://www.youtube.com/youtubei/v1/account/account_menu"
+  ];
+  for (const base of endpoints) {
+    try {
+      const res = await fetch(
+        base + "?key=" + encodeURIComponent(state.apiKey) + "&prettyPrint=false",
+        {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(context)
+        }
+      );
+      if (!res.ok) {
+        console.warn("[VideoDeck] account endpoint", base, "HTTP", res.status);
+        continue;
+      }
+      const data = await res.json();
+      // modern header block
+      let hdr = findFirstByKey(data, "activeAccountHeaderRenderer");
+      // account switcher items also carry name + photo
+      if (!hdr) hdr = findFirstByKey(data, "accountItemRenderer");
+      if (!hdr) {
+        console.warn("[VideoDeck] account response had no known header keys:",
+          Object.keys(data).slice(0, 10));
+        continue;
+      }
+      const nameObj = hdr.accountName || hdr.title || {};
+      const name =
+        nameObj.simpleText ||
+        nameObj.runs?.map((r) => r.text).join("") ||
+        "";
+      const avatar = findAvatarUrl(hdr.accountPhoto || hdr);
+      const email = hdr.email?.simpleText || "";
+      if (name) state.account.name = name;
+      if (avatar) state.account.avatar = avatar;
+      if (email) state.account.email = email;
+      console.info("[VideoDeck] account loaded from", base.split("/").pop());
+      return;
+    } catch (err) {
+      console.warn("[VideoDeck] account endpoint", base, "failed:", err.message);
+    }
+  }
+  console.warn("[VideoDeck] account endpoints all failed; topbar avatar =", state.account.avatar || "none");
 };
 
 const renderAccount = () => {
