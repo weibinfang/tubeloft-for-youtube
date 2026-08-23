@@ -69,7 +69,7 @@ var GM_registerMenuCommand = function (name, fn) {
   if (typeof fn === "function") __gmMenuCommands.set(name, fn);
 };
 if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage) {
-  chrome.runtime.onMessage.addListener(function (msg) {
+  chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
     if (msg && msg.type === "yti-menu-command") {
       var fn = __gmMenuCommands.get(msg.name);
       if (typeof fn === "function") {
@@ -79,6 +79,13 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
           console.warn("[YTI] menu command failed:", e);
         }
       }
+    } else if (msg && msg.type === "vd-heartbeat-ping") {
+      // Background worker verifies both layers on this tab (fallback for
+      // tabs that lost their content scripts after an extension toggle or
+      // browser restart). Report the MAIN-world engine state as well.
+      try {
+        sendResponse({ ok: true, engine: document.documentElement.hasAttribute("tabview-loaded") });
+      } catch (e) { /* ignore */ }
     }
   });
 }
@@ -183,6 +190,11 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
 (function () {
   'use strict';
 
+  // Reinjection guard: background.js may re-inject this file as a fallback
+  // after a browser restart; never run the toolbox/UI layer twice.
+  if (document.documentElement.hasAttribute("vd-content-loaded")) return;
+  document.documentElement.setAttribute("vd-content-loaded", "1");
+
   
   /*!
    * Before using this script, please make sure to read the information provided
@@ -269,7 +281,7 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
       border-bottom: 0 !important;
       border-radius: 999px !important;
       background-color: transparent !important;
-      color: var(--yt-spec-text-secondary, #aaa) !important;
+      color: var(--yt-sys-color-baseline--text-secondary, var(--yt-spec-text-secondary, #aaa)) !important;
       text-transform: none !important;
       font-size: 13px !important;
       font-weight: 500 !important;
@@ -284,8 +296,16 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
       opacity: 0.7 !important;
       transition: transform 0.3s cubic-bezier(0.34, 1.5, 0.5, 1), opacity 0.2s ease !important;
     }
+    /* Hover text follows the page's primary text token. 2026 YouTube removed
+       the --yt-spec-* palette entirely, so a bare var(--yt-spec-text-primary,
+       #f1f1f1) always fell back to near-white — invisible on the light theme
+       ("comment label turns transparent on hover"). Chain the new baseline
+       token first so both themes resolve to a contrasting color. */
     ytd-watch-flexy #right-tabs .tab-btn[tyt-tab-content]:not(.active):hover {
-      color: var(--yt-spec-text-primary, #f1f1f1) !important;
+      color: var(--yt-sys-color-baseline--text-primary, var(--yt-spec-text-primary, #f1f1f1)) !important;
+    }
+    ytd-watch-flexy #right-tabs .tab-btn[tyt-tab-content]:not(.active):hover > svg {
+      opacity: 0.95 !important;
     }
     ytd-watch-flexy #right-tabs #material-tabs[data-vd-theme="dark"] .tab-btn[tyt-tab-content].active {
       color: #0f0f0f !important;
@@ -301,7 +321,7 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
       transform: scale(1.15) !important;
     }
     ytd-watch-flexy[tyt-comment-disabled] #right-tabs .tab-btn[tyt-tab-content="#tab-comments"] {
-      color: var(--yt-spec-text-disabled, #909090) !important;
+      color: var(--yt-sys-color-baseline--text-disabled, var(--yt-spec-text-disabled, #909090)) !important;
     }
     ytd-watch-flexy #right-tabs .tab-content {
       border: 0 !important;
@@ -314,6 +334,51 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
     @keyframes vdTabFadeUp {
       from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
+    }
+    /* ── Queue ("接下来播放") panel inside the sidebar ─────────────────
+       The panel lives as a flex sibling of #right-tabs in secondary-wrapper.
+       In the narrowed sidebar its header rows wrap CJK text per character
+       ("接下来播放:" stacks vertically). Force the panel to full width and
+       make the header rows nowrap + ellipsis so both the collapsed bar and
+       the expanded list stay readable. */
+    secondary-wrapper > ytd-playlist-panel-renderer#playlist {
+      align-self: stretch !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
+      width: 100% !important;
+    }
+    secondary-wrapper > ytd-playlist-panel-renderer#playlist #container,
+    secondary-wrapper > ytd-playlist-panel-renderer#playlist .header,
+    secondary-wrapper > ytd-playlist-panel-renderer#playlist #header-contents,
+    secondary-wrapper > ytd-playlist-panel-renderer#playlist #header-top-row,
+    secondary-wrapper > ytd-playlist-panel-renderer#playlist #header-description,
+    secondary-wrapper > ytd-playlist-panel-renderer#playlist #publisher-container {
+      min-width: 0 !important;
+    }
+    secondary-wrapper > ytd-playlist-panel-renderer#playlist #header-top-row,
+    secondary-wrapper > ytd-playlist-panel-renderer#playlist #header-description,
+    secondary-wrapper > ytd-playlist-panel-renderer#playlist #next-video-title,
+    secondary-wrapper > ytd-playlist-panel-renderer#playlist #publisher-container {
+      display: flex !important;
+      flex-wrap: nowrap !important;
+      align-items: center !important;
+    }
+    secondary-wrapper > ytd-playlist-panel-renderer#playlist #next-video-title {
+      min-width: 0 !important;
+    }
+    secondary-wrapper > ytd-playlist-panel-renderer#playlist #next-label {
+      flex-shrink: 0 !important;
+      white-space: nowrap !important;
+    }
+    secondary-wrapper > ytd-playlist-panel-renderer#playlist #next-video-title yt-formatted-string,
+    secondary-wrapper > ytd-playlist-panel-renderer#playlist .byline-title {
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      white-space: nowrap !important;
+      min-width: 0 !important;
+    }
+    secondary-wrapper > ytd-playlist-panel-renderer#playlist .byline-title {
+      flex-shrink: 0 !important;
     }
   `;
 
@@ -1590,10 +1655,13 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
   // state onto a single floating pill inside #material-tabs and animates it
   // between tabs (spring easing handled by the #vd-tab-indicator CSS).
   (() => {
-    // 2026 YouTube no longer sets html[dark], so light/dark is detected by
-    // sampling the computed --yt-spec-text-primary luminance instead.
+    // 2026 YouTube no longer sets html[dark] and also dropped the whole
+    // --yt-spec-* palette, so light/dark is detected by sampling the computed
+    // text-primary luminance — new baseline token first, legacy spec fallback.
     const detectTheme = () => {
-      let v = getComputedStyle(document.documentElement).getPropertyValue("--yt-spec-text-primary").trim();
+      const htmlCs = getComputedStyle(document.documentElement);
+      let v = htmlCs.getPropertyValue("--yt-sys-color-baseline--text-primary").trim();
+      if (!v) v = htmlCs.getPropertyValue("--yt-spec-text-primary").trim();
       if (!v) v = getComputedStyle(document.body).color || "";
       let m = v.match(/#([0-9a-f]{6})/i) || v.match(/#([0-9a-f]{3})/i);
       let r = -1, g = -1, b = -1;
@@ -1670,6 +1738,28 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
     if (isOpenMarkOrRemoveAd) {
       MarkOrRemoveAd.run();
     }
+  })();
+
+  // Engine heartbeat: the MAIN-world layout engine stamps `tabview-loaded`
+  // on <html> as soon as it initialises. On rare cold loads — most notably
+  // right after toggling the extension or a browser restart — the declared
+  // MAIN-world script may never run, leaving the page without the info/video
+  // tabs. Keep asking the background worker to re-inject it (throttled)
+  // until the stamp appears; a one-shot report could miss a racing tab.
+  (() => {
+    const ENGINE_DEADLINE_MS = 6000;
+    const RESEND_GAP_MS = 10000;
+    const start = Date.now();
+    let lastSent = 0;
+    setInterval(() => {
+      if (document.documentElement.hasAttribute("tabview-loaded")) return;
+      if (Date.now() - start < ENGINE_DEADLINE_MS || document.readyState !== "complete") return;
+      if (Date.now() - lastSent < RESEND_GAP_MS) return;
+      lastSent = Date.now();
+      try {
+        chrome.runtime.sendMessage({ type: "vd-engine-missing", url: location.href });
+      } catch (e) { /* extension context invalidated — nothing to do */ }
+    }, 2000);
   })();
 
 }());

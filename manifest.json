@@ -22,7 +22,7 @@
       "128": "icons/icon.png"
     }
   },
-  "permissions": ["contextMenus"],
+  "permissions": ["contextMenus", "scripting", "webNavigation"],
   "host_permissions": ["*://*.youtube.com/*"],
   "content_scripts": [
     {

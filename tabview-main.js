@@ -324,6 +324,11 @@
         return;
       if (CustomElementRegistry.prototype.define000)
         return;
+      // Reinjection guard: fallback injection from background.js must not
+      // re-run an engine that already initialised (flag 1 is set at the end
+      // of a successful execution below).
+      if (document.documentElement && document.documentElement.hasAttribute("tabview-loaded"))
+        return;
       if (typeof CustomElementRegistry.prototype.define !== "function")
         return;
       const HTMLElement_ = HTMLElement.prototype.constructor;
@@ -796,6 +801,7 @@
       );
       const videosElementProvidedPromise = new PromiseExternal();
       const navigateFinishedPromise = new PromiseExternal();
+      let navigateFinishSeen = false;
       let isRightTabsInserted = false;
       const rightTabsProvidedPromise = new PromiseExternal();
       const infoExpanderElementProvidedPromise = new PromiseExternal();
@@ -3044,6 +3050,7 @@
           }
         },
         "yt-navigate-finish": (evt) => {
+          navigateFinishSeen = true;
           const ytdAppElm = document.querySelector("ytd-page-manager#page-manager.style-scope.ytd-app");
           const ytdAppCnt = insp(ytdAppElm);
           pageType = ytdAppCnt ? (ytdAppCnt.data || 0).page : null;
@@ -3434,32 +3441,85 @@
       };
       Promise.all([videosElementProvidedPromise, navigateFinishedPromise]).then(eventMap["onceInsertRightTabs"]).catch(console.warn);
       Promise.all([navigateFinishedPromise, infoExpanderElementProvidedPromise]).then(eventMap["onceInfoExpanderElementProvidedPromised"]).catch(console.warn);
-      // Watchdog: on a cold first load the description renderer's `attached`
-      // callback can fire before its style-scope classes are applied (the
-      // `classList.length` guard in the attached handler rejects it), so the
-      // info-tab clone is never created and #tab-info stays empty — attached
-      // does not refire and nothing retries. Poll until the tab has content,
-      // re-driving the original capture/move flow.
+      // Watchdog: keeps #tab-info populated for the whole page lifetime.
+      // Cold loads race in several ways (attached firing before style-scope
+      // classes or before hydration data; 2026 YouTube delivers the
+      // description renderer inside the engagement panel, sometimes late),
+      // and hydration re-renders can remove content again — so a one-shot
+      // watchdog is not enough. If every recovery path keeps failing, dump
+      // diagnostics to the console once to make the next round of debugging
+      // evidence-based.
       (() => {
-        let wdTries = 0;
-        const wdStop = () => {
-          clearInterval(wdTimer);
+        const isEmptyData = (d) => d == null || typeof d !== "object" || Object.keys(d).length === 0;
+        let wdFailStreak = 0;
+        let wdSyncTries = 0;
+        let wdDiagnosed = false;
+        const wdDiagnose = (stage) => {
+          if (wdDiagnosed)
+            return;
+          wdDiagnosed = true;
+          try {
+            const rs = [...document.querySelectorAll("ytd-expandable-video-description-body-renderer")].map((r) => ({
+              noscript: r.closest("noscript") !== null,
+              connected: r.isConnected,
+              cls: (r.className || "").length,
+              data: !isEmptyData(insp(r).data),
+              attrs: ["tyt-info-renderer", "tyt-info-renderer-back", "tyt-main-info"].filter((a) => r.hasAttribute(a)),
+              parent: r.parentElement ? r.parentElement.tagName + (r.parentElement.id ? "#" + r.parentElement.id : "") : null
+            }));
+            console.warn("[VideoDeck] info tab recovery exhausted at " + stage, JSON.stringify({
+              infoExpander: !!elements.infoExpander,
+              back: !!elements.infoExpanderRendererBack,
+              front: !!elements.infoExpanderRendererFront,
+              renderers: rs
+            }));
+          } catch (e) {
+          }
         };
         const wdCheck = () => {
           const tabInfo = document.querySelector("#tab-info");
           if (!tabInfo)
             return;
-          if (tabInfo.querySelector("[tyt-main-info]")) {
-            wdStop();
+          const mainInfo = tabInfo.querySelector("[tyt-main-info]");
+          if (mainInfo) {
+            const hasVisibleContent = (mainInfo.textContent || "").trim().length > 0;
+            if (hasVisibleContent) {
+              wdFailStreak = 0;
+              wdSyncTries = 0;
+              return;
+            }
+            // Marker present but nothing rendered. Either the clone was
+            // captured before hydration (sync data from the real renderer) or
+            // the clone itself failed to render — after a few sync attempts
+            // abandon it so the recovery branches below rebuild a fresh one.
+            const back = elements.infoExpanderRendererBack;
+            const front = elements.infoExpanderRendererFront;
+            const backHasData = back && !isEmptyData(insp(back).data);
+            if (backHasData && (isEmptyData(insp(front && front.closest ? front : mainInfo).data) || ++wdSyncTries > 5)) {
+              if (wdSyncTries > 5) {
+                const stuck = front && front.closest && front.closest("#tab-info") ? front : mainInfo;
+                stuck.removeAttribute000("tyt-main-info");
+                if (front && front.closest && front.closest("#tab-info"))
+                  front.removeAttribute000("tyt-info-renderer");
+                elements.infoExpander = null;
+                stuck.remove();
+                wdSyncTries = 0;
+                console.warn("[VideoDeck] info tab: dropped stuck description clone, rebuilding");
+              } else if (back) {
+                Promise.resolve(back).then(eventMap["ytd-expandable-video-description-body-renderer::attached"]).catch(console.warn);
+              }
+            }
+            if (++wdFailStreak >= 25)
+              wdDiagnose("marker-present-no-content");
             return;
           }
-          if (++wdTries > 100) {
-            wdStop();
-            return;
-          }
+          if (++wdFailStreak >= 25)
+            wdDiagnose("no-marker");
           const infoExpander = elements.infoExpander;
           if (infoExpander) {
-            if (!infoExpander.closest("#right-tabs")) {
+            if (infoExpander.isConnected === false) {
+              elements.infoExpander = null;
+            } else if (!infoExpander.closest("#tab-info")) {
               infoExpander.classList.add("tyt-main-info");
               tabInfo.assignChildren111(null, infoExpander, null);
               Promise.resolve(lockSet["infoFixLock"]).then(infoFix).catch(console.warn);
@@ -3467,21 +3527,22 @@
             return;
           }
           const clone = document.querySelector("ytd-expandable-video-description-body-renderer[tyt-info-renderer]");
-          if (clone && !clone.closest("#tab-info")) {
+          if (clone) {
             if (clone.hasAttribute000("tyt-main-info"))
               clone.removeAttribute000("tyt-main-info");
             Promise.resolve(clone).then(eventMap["ytd-expandable-video-description-body-renderer::attached"]).catch(console.warn);
             return;
           }
-          const renderer = document.querySelector("ytd-watch-flexy ytd-expandable-video-description-body-renderer:not([tyt-info-renderer]):not([tyt-info-renderer-back])");
-          if (renderer) {
-            const cnt = insp(renderer);
-            if (cnt && cnt.data) {
-              Promise.resolve(renderer).then(eventMap["ytd-expandable-video-description-body-renderer::attached"]).catch(console.warn);
-            }
-          }
+          // No clone at all. Drive the capture flow from any surviving real
+          // renderer — including one already marked as the previous capture's
+          // back renderer (its clone may have been destroyed by a YouTube
+          // re-render). On 2026 YouTube the renderer lives in the engagement
+          // panel and can arrive late, so data may appear on a later poll.
+          const renderer = document.querySelector("ytd-watch-flexy ytd-expandable-video-description-body-renderer:not([tyt-info-renderer])");
+          if (renderer && !renderer.closest("noscript") && insp(renderer).data)
+            Promise.resolve(renderer).then(eventMap["ytd-expandable-video-description-body-renderer::attached"]).catch(console.warn);
         };
-        const wdTimer = setInterval(wdCheck, 1200);
+        setInterval(wdCheck, 1200);
       })();
       const isCustomElementsProvided = typeof customElements !== "undefined" && typeof (customElements || 0).whenDefined === "function";
       const promiseForCustomYtElementsReady = isCustomElementsProvided ? Promise.resolve(0) : new Promise((callback) => {
@@ -3569,6 +3630,18 @@
         }
       };
       document.addEventListener("yt-navigate-finish", eventMap["yt-navigate-finish"], false);
+      // Late-injection compensation: when background.js re-injects this script
+      // after an extension toggle/restart, the page's first yt-navigate-finish
+      // has already fired, so a watch page would never build the sidebar. If
+      // we are already on a watch page and no finish event ever reached us,
+      // drive the handler ourselves once.
+      setTimeout_(() => {
+        try {
+          if (!navigateFinishSeen && !isRightTabsInserted && document.querySelector("ytd-watch-flexy #player"))
+            eventMap["yt-navigate-finish"]();
+        } catch (e) {
+        }
+      }, 4000);
       document.addEventListener("animationstart", (evt) => {
         const f = eventMap[evt.animationName];
         if (typeof f === "function")
