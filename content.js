@@ -241,8 +241,9 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
       border: 1px solid rgba(127, 127, 127, 0.15) !important;
       border-radius: 999px !important;
       background: var(--yt-spec-badge-chip-background, rgba(127, 127, 127, 0.12));
-      backdrop-filter: blur(12px) saturate(1.5);
-      -webkit-backdrop-filter: blur(12px) saturate(1.5);
+      /* No backdrop-filter here: when any overlay (tooltip, sort dropdown)
+         appears, Chrome resamples backdrop-filter surfaces from stale frames
+         and paints ghost shadow streaks along the capsule edges. */
       padding: 4px !important;
       gap: 2px;
     }
@@ -379,6 +380,44 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
     }
     secondary-wrapper > ytd-playlist-panel-renderer#playlist .byline-title {
       flex-shrink: 0 !important;
+    }
+    /* ── Miniplayer "展开" tooltip stacking vertically ─────────────────
+       The visible label is the expand button's player tooltip
+       (#movie_player .ytp-tooltip → .ytp-tooltip-text). YouTube's own JS
+       stamps an inline max-width:0px on it and this tooltip variant has
+       no white-space:nowrap rule, so the two CJK characters stack. Force a
+       single line inside the miniplayer. */
+    ytd-miniplayer #movie_player .ytp-tooltip,
+    .ytdMiniplayerComponentHost #movie_player .ytp-tooltip,
+    ytd-miniplayer-player-container #movie_player .ytp-tooltip {
+      max-width: none !important;
+    }
+    ytd-miniplayer #movie_player .ytp-tooltip .ytp-tooltip-text,
+    ytd-miniplayer #movie_player .ytp-tooltip .ytp-tooltip-bottom-text,
+    ytd-miniplayer #movie_player .ytp-tooltip .ytp-tooltip-text-wrapper,
+    .ytdMiniplayerComponentHost #movie_player .ytp-tooltip .ytp-tooltip-text,
+    .ytdMiniplayerComponentHost #movie_player .ytp-tooltip .ytp-tooltip-bottom-text,
+    .ytdMiniplayerComponentHost #movie_player .ytp-tooltip .ytp-tooltip-text-wrapper,
+    ytd-miniplayer-player-container #movie_player .ytp-tooltip .ytp-tooltip-text,
+    ytd-miniplayer-player-container #movie_player .ytp-tooltip .ytp-tooltip-bottom-text,
+    ytd-miniplayer-player-container #movie_player .ytp-tooltip .ytp-tooltip-text-wrapper {
+      white-space: nowrap !important;
+    }
+    /* Belt and braces: if a future player build renames the miniplayer
+       wrapper, keep at least the tooltip text itself non-wrapping when it
+       sits in the miniplayer's top-left control area. */
+    #movie_player .ytp-miniplayer-ui ~ .ytp-tooltip .ytp-tooltip-text {
+      white-space: nowrap !important;
+    }
+    /* ── Sort-menu tooltip collapses into a black hairline ─────────────────
+       The engine applies contain:content to every paper-tooltip while the
+       tab layout is active ([tyt-tab]); containment stops the bubble's
+       content from sizing its wrapper, so the dark bubble renders as a thin
+       vertical line when hovering "排序方式". Undo the containment here
+       (later cascade, same specificity — no !important needed). */
+    ytd-watch-flexy[tyt-tab] #right-tabs tp-yt-paper-tooltip,
+    ytd-watch-flexy[tyt-tab] secondary-wrapper tp-yt-paper-tooltip {
+      contain: none;
     }
   `;
 

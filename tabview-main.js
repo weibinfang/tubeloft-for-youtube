@@ -108,47 +108,34 @@
         `;
         return addHTML;
       }, getLang = function() {
-        let lang = "en";
-        let htmlLang = ((document || 0).documentElement || 0).lang || "";
-        switch (htmlLang) {
-          case "en":
-          case "en-GB":
-            lang = "en";
-            break;
-          case "de":
-          case "de-DE":
-            lang = "du";
-            break;
-          case "fr":
-          case "fr-CA":
-          case "fr-FR":
-            lang = "fr";
-            break;
-          case "zh-Hant":
-          case "zh-Hant-HK":
-          case "zh-Hant-TW":
-            lang = "tw";
-            break;
-          case "zh-Hans":
-          case "zh-Hans-CN":
-            lang = "cn";
-            break;
-          case "ja":
-          case "ja-JP":
-            lang = "jp";
-            break;
-          case "ko":
-          case "ko-KR":
-            lang = "kr";
-            break;
-          case "ru":
-          case "ru-RU":
-            lang = "ru";
-            break;
-          default:
-            lang = "en";
-        }
-        return lang;
+        // 2026 YouTube serves varying html lang values across pages and
+        // experiment buckets (zh-Hans-CN, zh-CN, occasionally empty at
+        // tab-creation time), so exact-matching a fixed list misfires into
+        // English. Normalize by prefix and fall back to navigator.language.
+        const pick = (l) => {
+          l = (l || "").toLowerCase();
+          if (!l)
+            return null;
+          if (l.startsWith("zh-hant") || l === "zh-tw" || l === "zh-hk")
+            return "tw";
+          if (l.startsWith("zh"))
+            return "cn";
+          if (l.startsWith("ja"))
+            return "jp";
+          if (l.startsWith("ko"))
+            return "kr";
+          if (l.startsWith("de"))
+            return "du";
+          if (l.startsWith("fr"))
+            return "fr";
+          if (l.startsWith("ru"))
+            return "ru";
+          if (l.startsWith("en"))
+            return "en";
+          return null;
+        };
+        const htmlLang = ((document || 0).documentElement || 0).lang || "";
+        return pick(htmlLang) || pick(typeof navigator !== "undefined" ? navigator.language : "") || "en";
       }, getLangForPage = function() {
         let lang = getLang();
         if (langWords[lang])
@@ -3454,6 +3441,12 @@
         let wdFailStreak = 0;
         let wdSyncTries = 0;
         let wdDiagnosed = false;
+        let wdCommentSwitched = false;
+        const wdRemoveFallback = (tabInfo) => {
+          const fb = tabInfo.querySelector("[vd-info-fallback]");
+          if (fb)
+            fb.remove();
+        };
         const wdDiagnose = (stage) => {
           if (wdDiagnosed)
             return;
@@ -3482,6 +3475,7 @@
             return;
           const mainInfo = tabInfo.querySelector("[tyt-main-info]");
           if (mainInfo) {
+            wdRemoveFallback(tabInfo);
             const hasVisibleContent = (mainInfo.textContent || "").trim().length > 0;
             if (hasVisibleContent) {
               wdFailStreak = 0;
@@ -3520,6 +3514,7 @@
             if (infoExpander.isConnected === false) {
               elements.infoExpander = null;
             } else if (!infoExpander.closest("#tab-info")) {
+              wdRemoveFallback(tabInfo);
               infoExpander.classList.add("tyt-main-info");
               tabInfo.assignChildren111(null, infoExpander, null);
               Promise.resolve(lockSet["infoFixLock"]).then(infoFix).catch(console.warn);
@@ -3541,6 +3536,40 @@
           const renderer = document.querySelector("ytd-watch-flexy ytd-expandable-video-description-body-renderer:not([tyt-info-renderer])");
           if (renderer && !renderer.closest("noscript") && insp(renderer).data)
             Promise.resolve(renderer).then(eventMap["ytd-expandable-video-description-body-renderer::attached"]).catch(console.warn);
+          // Last resorts, in order of preference:
+          // 1) 2026 YouTube sometimes never delivers the description renderer
+          //    (engagement-panel lazy fetch) — after ~18s with nothing to
+          //    recover from, render the metadata description preview
+          //    directly into the tab instead of leaving it empty.
+          // 2) If even that is unavailable but comments loaded, switch the
+          //    sidebar to the comments tab once so it never sits blank.
+          if (wdFailStreak >= 15 && !tabInfo.querySelector("[vd-info-fallback]")) {
+            const actionable = elements.infoExpander || document.querySelector("ytd-expandable-video-description-body-renderer[tyt-info-renderer]") || (renderer && insp(renderer).data);
+            if (!actionable) {
+              const inline = document.querySelector("ytd-watch-metadata ytd-text-inline-expander");
+              if (inline && (inline.textContent || "").trim().length > 0) {
+                const fb = inline.cloneNode(true);
+                fb.setAttribute("vd-info-fallback", "");
+                fb.removeAttribute("id");
+                for (const el of fb.querySelectorAll("[id]"))
+                  el.removeAttribute("id");
+                tabInfo.assignChildren111(null, fb, null);
+                Promise.resolve(lockSet["infoFixLock"]).then(infoFix).catch(console.warn);
+                console.warn("[VideoDeck] info tab: rendered description preview fallback");
+              }
+            }
+          }
+          if (wdFailStreak >= 50 && !wdCommentSwitched && !tabInfo.querySelector("[vd-info-fallback], [tyt-main-info]")) {
+            const tabComments = document.querySelector("#tab-comments");
+            if (tabComments && tabComments.childElementCount > 0) {
+              wdCommentSwitched = true;
+              try {
+                switchToTab("#tab-comments");
+                console.warn("[VideoDeck] info tab empty — switched to comments as fallback");
+              } catch (e) {
+              }
+            }
+          }
         };
         setInterval(wdCheck, 1200);
       })();
