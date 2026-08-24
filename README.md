@@ -1,9 +1,9 @@
-# VideoDeck for YouTube
+# TubeLoft for YouTube
 
 A Chrome extension (Manifest V3) that gives YouTube's watch page a modern,
 theme-aware upgrade layer.
 
-> 声明：本项目基于 MIT 许可的开源项目 [Tabview-Youtube](https://github.com/tabview-youtube/Tabview-Youtube)
+> 声明：本项目由 vibinfang 开发，基于 MIT 许可的开源项目 [Tabview-Youtube](https://github.com/tabview-youtube/Tabview-Youtube)
 > 及 "YouTube Improvements – Layout & Video Enhancer" userscript 衍生而来，
 > 衍生部分遵循 MIT 许可证保留原作者（Thalrien.vx, CY Fung）版权声明。
 
@@ -13,17 +13,16 @@ theme-aware upgrade layer.
   move into tabs beside the player, instead of a long single column
 - **Playback speed control** — quick speed menu (0.5× – 3.0×) in the player,
   remembered across videos
-- **Screenshot** — capture the current video frame and save it as PNG
-- **Loop** — one-click loop toggle for the current video
-- **Picture-in-picture** — quick PiP button
 - **Light / dark aware UI** — all extension UI uses YouTube's own CSS
   variables, so it follows the site theme automatically
 - **Ad marking** — visually marks known ad placements on the page
+- **Watch history popup** — browse and search your YouTube watch history
+  from the toolbar icon
 
 ## Architecture
 
 ```
-extension/
+tubeloft-extension/
 ├── manifest.json      # MV3 manifest (Chrome 111+)
 ├── tabview-main.js    # TabView engine — MAIN world content script
 │                      #   (runs in page context, not subject to page CSP)
@@ -42,7 +41,7 @@ only possible from the page's main world, injected as a declared
 
 1. Open `chrome://extensions/`
 2. Enable **Developer mode** (top-right)
-3. Click **Load unpacked** and select the `extension/` directory
+3. Click **Load unpacked** and select the `tubeloft-extension/` directory
 
 ## Install (Chrome Web Store)
 
@@ -50,6 +49,6 @@ Pending review.
 
 ## License
 
-MIT — see [LICENSE](./LICENSE). Includes code originally copyrighted by
-Thalrien.vx and CY Fung (Tabview-Youtube), used and redistributed under the
-terms of the MIT license.
+MIT — see [LICENSE](./LICENSE). Copyright (c) 2026 vibinfang.
+Includes code originally copyrighted by Thalrien.vx and CY Fung
+(Tabview-Youtube), used and redistributed under the terms of the MIT license.

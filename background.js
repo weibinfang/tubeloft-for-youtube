@@ -1,3 +1,6 @@
+// TubeLoft for YouTube — background service worker.
+// Copyright (c) 2026 vibinfang. Licensed under the MIT license.
+//
 // Background service worker: provides the extension context-menu entry that
 // replaces the userscript's GM_registerMenuCommand("Setting", ...) feature.
 // Clicking it sends a message to the content script, which looks up and runs
@@ -7,7 +10,7 @@ chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.removeAll(() => {
     chrome.contextMenus.create({
       id: "yti-setting",
-      title: "VideoDeck – Settings",
+      title: "TubeLoft – Settings",
       contexts: ["page", "video"]
     });
   });

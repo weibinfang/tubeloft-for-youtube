@@ -1,4 +1,6 @@
-/* VideoDeck popup — matches the extension's glass / chip design system */
+/* TubeLoft for YouTube — popup styles.
+ * Copyright (c) 2026 vibinfang. Licensed under the MIT license.
+ * Matches the extension's glass / chip design system. */
 :root {
   color-scheme: dark light;
   --bg: #0f0f0f;

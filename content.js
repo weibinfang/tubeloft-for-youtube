@@ -1,4 +1,7 @@
 /*!
+ * TubeLoft for YouTube — content script (isolated world).
+ * Copyright (c) 2026 vibinfang. Licensed under the MIT license.
+ *
  * GM_* API polyfill — lets the unmodified userscript body run as a Chrome
  * MV3 content script (isolated world).
  *   - Storage  -> localStorage with prefix (synchronous, like GM_getValue)
@@ -90,103 +93,15 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
   });
 }
 
-// ==UserScript==
-// @name        YouTube Improvements – Layout & Video Enhancer
-// @name:zh-CN  YouTube 改进 – 布局与视频增强
-// @name:zh-TW  YouTube 改進 – 版面與影片增強
-// @name:ar     تحسينات YouTube – تحسين التخطيط والفيديو
-// @name:bg     Подобрения за YouTube – Оформление и видео подобрения
-// @name:cs     Vylepšení YouTube – Rozvržení a vylepšení videa
-// @name:da     YouTube-forbedringer – Layout- og videoforbedring
-// @name:de     YouTube-Verbesserungen – Layout- und Video-Optimierung
-// @name:el     Βελτιώσεις YouTube – Διάταξη και ενίσχυση βίντεο
-// @name:en     YouTube Improvements – Layout & Video Enhancer
-// @name:eo     YouTube-Plibonigoj – Aranĝo kaj Video-Plibonigilo
-// @name:es     Mejoras de YouTube – Diseño y mejora de video
-// @name:es-419 Mejoras de YouTube – Diseño y mejora de video
-// @name:fi     YouTube-parannukset – Asettelu ja videon tehostus
-// @name:fr     Améliorations YouTube – Mise en page et amélioration vidéo
-// @name:fr-CA  Améliorations YouTube – Mise en page et amélioration vidéo
-// @name:he     שיפורי YouTube – פריסה ושיפור וידאו
-// @name:hr     YouTube poboljšanja – Izgled i poboljšanje videa
-// @name:hu     YouTube fejlesztések – Elrendezés és videó javítása
-// @name:id     Peningkatan YouTube – Tata letak & peningkat video
-// @name:it     Miglioramenti di YouTube – Layout e potenziamento video
-// @name:ja     YouTube 改善 – レイアウトと動画強化
-// @name:ka     YouTube-ის გაუმჯობესებები – განლაგება და ვიდეოს გაძლიერება
-// @name:ko     YouTube 개선 – 레이아웃 및 동영상 향상
-// @name:nb     YouTube-forbedringer – Layout og videoforbedring
-// @name:nl     YouTube-verbeteringen – Lay-out en videoverbetering
-// @name:pl     Ulepszenia YouTube – Układ i ulepszanie wideo
-// @name:pt-BR  Melhorias do YouTube – Layout e aprimoramento de vídeo
-// @name:ro     Îmbunătățiri YouTube – Aspect și îmbunătățire video
-// @name:ru     Улучшения YouTube – Макет и улучшение видео
-// @name:sv     YouTube-förbättringar – Layout och videoförbättring
-// @name:th     การปรับปรุง YouTube – เลย์เอาต์และการเพิ่มประสิทธิภาพวิดีโอ
-// @name:tr     YouTube İyileştirmeleri – Düzen ve video geliştirme
-// @name:uk     Покращення YouTube – Макет і покращення відео
-// @name:ug     YouTube ياخشىلىنىشى – ئورۇنلاشتۇرۇش ۋە سىن كۈچەيتىش
-// @name:vi     Cải tiến YouTube – Bố cục và tăng cường video
-// @description       A userscript that enhances YouTube with multiple useful features: optimized video details layout, video downloading, screenshot capture, dark/light theme toggle, fast-forward controls, and more.
-// @description:zh-CN 一个用于增强 YouTube 的用户脚本，提供多项实用功能，包括：优化的视频详情页布局、视频下载、视频截图、深色/浅色主题切换、视频快进控制等。
-// @description:zh-TW 一個用於強化 YouTube 的使用者腳本，提供多項實用功能，包括：優化的影片詳細頁面配置、影片下載、影片截圖、深色／淺色主題切換、影片快轉控制等。
-// @description:ar    سكريبت مستخدم يعزز تجربة YouTube من خلال عدة ميزات مفيدة، بما في ذلك: تخطيط محسّن لصفحة تفاصيل الفيديو، تنزيل الفيديو، التقاط لقطات شاشة، التبديل بين الوضع الداكن والفاتح، التحكم في التقديم السريع، والمزيد.
-// @description:bg    Потребителски скрипт, който подобрява YouTube с множество полезни функции, включително: оптимизиран изглед на страницата с детайли на видеото, изтегляне на видеа, екранни снимки, превключване между тъмен и светъл режим, бързо превъртане и други.
-// @description:cs    Uživatelský skript, který vylepšuje YouTube pomocí řady užitečných funkcí, včetně: optimalizovaného rozvržení stránky s podrobnostmi o videu, stahování videí, snímků obrazovky, přepínání tmavého/světlého režimu, ovládání rychlého přetáčení a dalších.
-// @description:da    Et brugerscript, der forbedrer YouTube med flere nyttige funktioner, herunder: optimeret layout af videoens detaljeside, videonedlastning, skærmbilleder, skift mellem mørkt/lyst tema, hurtig fremadspoling og mere.
-// @description:de    Ein Userskript, das YouTube mit mehreren nützlichen Funktionen erweitert, darunter: optimiertes Layout der Videodetailseite, Videodownloads, Screenshot-Erfassung, Umschaltung zwischen Dunkel- und Hellmodus, Schnellvorlauf-Steuerung und mehr.
-// @description:el    Ένα userscript που βελτιώνει το YouTube με πολλές χρήσιμες λειτουργίες, όπως: βελτιστοποιημένη διάταξη σελίδας λεπτομερειών βίντεο, λήψη βίντεο, στιγμιότυπα οθόνης, εναλλαγή σκοτεινού/φωτεινού θέματος, έλεγχος γρήγορης προώθησης και άλλα.
-// @description:eo    Uzantskripto kiu plibonigas YouTube per pluraj utilaj funkcioj, inkluzive de: optimumigita aranĝo de la videodetala paĝo, elŝuto de videoj, ekranfotoj, ŝanĝo inter malhela/luma temo, rapida antaŭeniro kaj pli.
-// @description:es    Un script de usuario que mejora YouTube con múltiples funciones útiles, incluyendo: diseño optimizado de la página de detalles del vídeo, descarga de vídeos, capturas de pantalla, cambio entre tema oscuro/claro, controles de avance rápido y más.
-// @description:fi    Käyttäjäskripti, joka parantaa YouTubea useilla hyödyllisillä ominaisuuksilla, mukaan lukien: optimoitu videon tietosivun asettelu, videon lataus, kuvakaappaukset, tumman/vaalean teeman vaihto, pikakelaus ja muuta.
-// @description:fr    Un script utilisateur qui améliore YouTube avec de nombreuses fonctionnalités utiles, notamment : mise en page optimisée de la page de détails vidéo, téléchargement de vidéos, captures d’écran, bascule entre thème sombre/clair, contrôles d’avance rapide, et plus encore.
-// @description:fr-CA Un script utilisateur qui améliore YouTube grâce à plusieurs fonctionnalités utiles, dont : une mise en page optimisée de la page des détails vidéo, le téléchargement de vidéos, des captures d’écran, le mode sombre/clair, le contrôle de l’avance rapide, et plus.
-// @description:he    סקריפט משתמש שמשפר את YouTube באמצעות מגוון תכונות שימושיות, כולל: פריסת דף פרטי וידאו מותאמת, הורדת וידאו, צילום מסך, מעבר בין מצב כהה/בהיר, שליטה בהאצה קדימה ועוד.
-// @description:hr    Korisnički skript koji poboljšava YouTube s više korisnih značajki, uključujući: optimizirani izgled stranice s detaljima videa, preuzimanje videa, snimke zaslona, prebacivanje između tamne/svijetle teme, brzo premotavanje i više.
-// @description:hu    Egy felhasználói szkript, amely számos hasznos funkcióval bővíti a YouTube-ot, beleértve: az optimalizált videórészletek oldalelrendezést, videóletöltést, képernyőképeket, sötét/világos téma váltást, gyors előretekerést és egyebeket.
-// @description:id    Script pengguna yang meningkatkan YouTube dengan berbagai fitur berguna, termasuk: tata letak halaman detail video yang dioptimalkan, unduhan video, tangkapan layar, pengalihan tema gelap/terang, kontrol percepatan, dan lainnya.
-// @description:it    Uno script utente che migliora YouTube con diverse funzionalità utili, tra cui: layout ottimizzato della pagina dei dettagli del video, download dei video, acquisizione di screenshot, cambio tema scuro/chiaro, controlli di avanzamento rapido e altro.
-// @description:ja    YouTube を強化するユーザースクリプトで、動画詳細ページの最適化されたレイアウト、動画のダウンロード、スクリーンショット取得、ダーク／ライトテーマ切替、早送り操作などの便利な機能を提供します。
-// @description:ka    მომხმარებლის სკრიპტი, რომელიც YouTube-ს აუმჯობესებს მრავალ სასარგებლო ფუნქციით, მათ შორის: ვიდეოს დეტალების გვერდის ოპტიმიზებული განლაგება, ვიდეოების ჩამოტვირთვა, ეკრანის გადაღება, ღია/ბნელი თემის გადართვა, სწრაფი წინ წაწევის კონტროლი და სხვა.
-// @description:ko    YouTube를 다양한 유용한 기능으로 개선하는 사용자 스크립트로, 최적화된 비디오 상세 페이지 레이아웃, 비디오 다운로드, 스크린샷 캡처, 다크/라이트 테마 전환, 빠른 앞으로 감기 제어 등을 제공합니다.
-// @description:nb    Et brukerskript som forbedrer YouTube med flere nyttige funksjoner, inkludert: optimalisert layout for videodetaljsiden, videonedlasting, skjermbilder, bytte mellom mørkt/lyst tema, hurtigspoling og mer.
-// @description:nl    Een gebruikersscript dat YouTube verbetert met meerdere nuttige functies, waaronder: een geoptimaliseerde lay-out van de videodetailpagina, videodownloads, screenshots, schakelen tussen donker/licht thema, snel vooruitspoelen en meer.
-// @description:pl    Skrypt użytkownika, który usprawnia YouTube dzięki wielu przydatnym funkcjom, w tym: zoptymalizowanemu układowi strony szczegółów wideo, pobieraniu filmów, zrzutom ekranu, przełączaniu trybu ciemnego/jasnego, szybkiemu przewijaniu i innym.
-// @description:pt-BR Um script de usuário que aprimora o YouTube com vários recursos úteis, incluindo: layout otimizado da página de detalhes do vídeo, download de vídeos, captura de telas, alternância entre tema escuro/claro, controles de avanço rápido e muito mais.
-// @description:ro    Un script de utilizator care îmbunătățește YouTube cu mai multe funcții utile, inclusiv: un layout optimizat al paginii cu detalii video, descărcare video, capturi de ecran, comutare temă întunecată/luminoasă, control de derulare rapidă și altele.
-// @description:ru    Пользовательский скрипт, расширяющий возможности YouTube с помощью множества полезных функций, включая: оптимизированный макет страницы с деталями видео, загрузку видео, создание скриншотов, переключение тёмной/светлой темы, управление быстрой перемоткой и многое другое.
-// @description:sv    Ett användarskript som förbättrar YouTube med flera användbara funktioner, inklusive: optimerad layout för videodetaljsidan, videonedladdning, skärmbilder, växling mellan mörkt/ljust tema, snabbspolningskontroller och mer.
-// @description:th    สคริปต์ผู้ใช้ที่ช่วยปรับปรุง YouTube ด้วยฟีเจอร์ที่มีประโยชน์หลายรายการ ได้แก่ เลย์เอาต์หน้ารายละเอียดวิดีโอที่ปรับให้เหมาะสม การดาวน์โหลดวิดีโอ การจับภาพหน้าจอ การสลับธีมมืด/สว่าง การควบคุมการกรอไปข้างหน้า และอื่นๆ
-// @description:tr    YouTube'u birden fazla faydalı özellikle geliştiren bir kullanıcı betiği: optimize edilmiş video detay sayfası düzeni, video indirme, ekran görüntüsü alma, karanlık/açık tema geçişi, hızlı ileri sarma kontrolleri ve daha fazlası.
-// @description:uk    Користувацький скрипт, що покращує YouTube за допомогою багатьох корисних функцій, зокрема: оптимізованого макета сторінки з деталями відео, завантаження відео, знімків екрана, перемикання темної/світлої теми, керування швидким перемотуванням та іншого.
-// @description:ug    YouTube نى كۆپلىگەن پايدىلىق ئىقتىدارلار بىلەن كۈچەيتىدىغان ئىشلەتكۈچى سكرىپتى، بۇلار: ۋىدىئو تەپسىلات بەتنىڭ ئوپتىماللاشتۇرۇلغان تۈزۈلىشى، ۋىدىئو چۈشۈرۈش، سكرىنشات ئېلىش، قارا/ئاق تېما ئالماشتۇرۇش، تېز ئالغا سۈرۈش كونتروللىرى ۋە باشقىلار.
-// @description:vi    Một userscript giúp nâng cao YouTube với nhiều tính năng hữu ích, bao gồm: bố cục trang chi tiết video được tối ưu hóa, tải video, chụp ảnh màn hình, chuyển đổi chủ đề tối/sáng, điều khiển tua nhanh và nhiều tính năng khác.
-// @namespace   open_source_thalrien_youtube
-// @version     1.1.5
-// @author      Thalrien.vx,CY Fung
-// @icon        data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACsAAAAgCAYAAACLmoEDAAABo0lEQVR4AdSXAZKDIBAEiR878zL1Zbmf5aY3txaWpqKyWCS1I4jotiMi6VLh75lSv1eFqdIKNks8qv7I9FR9JQE89mrr/KzNc5HXpOsuYgGrE0cd9eSD6n0mVauG5yKvCR7kWWdYNSoSnfxYCyU8g8C4kdcw0A6OtgD3jgHoF6x62I7KVsNe4k6umsWtUmZcA2P2W2DnYZDdQLPVHmd/AvB+A67x8RLAfuy0o8N0S0mRplTxFwVriKJlCqwGDGzoCwawpIh3GVhzJXoj2lFSxEFXg/WbF60PjeLhUR0WaICR6kXAl8AK0oMpDvn+ofISWD7pki89T7/Q1WEFyZgF9DSk218NFkhJEbdGBvb0GPI7zkvRsZzDyfBlJ7B5rtP1DBLQ4ke+BRIFi4vVIB08CvaQk578aAls0UR9NGFJf2BLzr/y3KnTZzB0NqhJ7842PxRk6miwVORIyw6bmQYr0CTgu0prVNlKYOBdbHyyl/9uaZQUCWhEZ3QFPHlc5AYS0Wb5Z2dt738jWlb5iM7opraV1J2ncVhb11IbeVzkniGVx+IPAAD///H503IAAAAGSURBVAMApvWIs8xfbPkAAAAASUVORK5CYII=
-// @include     *://*.youtube.com/**
-// @exclude     /^https?://\w+\.youtube\.com\/live_chat.*$/
-// @exclude     /^https?://\S+\.(txt|png|jpg|jpeg|gif|xml|svg|manifest|log|ini)[^\/]*$/
-// @antifeature referral-link
-// @noframes
-// @license     MIT
-// @run-at      document-start
-// @grant       GM_registerMenuCommand
-// @grant       GM_openInTab
-// @grant       GM.openInTab
-// @grant       GM_addStyle
-// @grant       GM_setValue
-// @grant       GM_getValue
-// @grant       GM_deleteValue
-// @grant       GM_xmlhttpRequest
-// @grant       unsafeWindow
-// @grant       GM_download
-// @grant       GM_setClipboard
-// @grant       GM_addElement
-// @downloadURL https://update.greasyfork.org/scripts/560618/YouTube%20Improvements%20%E2%80%93%20Layout%20%20Video%20Enhancer.user.js
-// @updateURL https://update.greasyfork.org/scripts/560618/YouTube%20Improvements%20%E2%80%93%20Layout%20%20Video%20Enhancer.meta.js
-// ==/UserScript==
+// ---------------------------------------------------------------------------
+// Attribution: the code below derives from the MIT-licensed userscript
+// "YouTube Improvements – Layout & Video Enhancer" v1.1.5 by Thalrien.vx
+// and CY Fung (https://github.com/tabview-youtube/Tabview-Youtube).
+// The original userscript metadata block (==UserScript== header) has been
+// removed: its auto-update URLs, download-feature descriptions and referral
+// features do not apply to this Chrome extension and were deliberately
+// stripped for Chrome Web Store compliance.
+// ---------------------------------------------------------------------------
 (function () {
   'use strict';
 
@@ -232,7 +147,7 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
 
   var css_248z$1 = "[tyt-tab] #right-tabs #material-tabs,[tyt-tab^=\"#\"] #right-tabs #material-tabs{border-radius:12px 12px 0 0!important}ytd-watch-flexy #right-tabs .tab-content{border-radius:0 0 12px 12px!important}ytd-watch-flexy[is-two-columns_] #right-tabs .tab-content-cld{scrollbar-color:rgba(0,0,0,.25) transparent;scrollbar-width:thin}ytd-watch-flexy[is-two-columns_] #right-tabs .tab-content-cld::-webkit-scrollbar{width:4px}ytd-watch-flexy[is-two-columns_] #right-tabs .tab-content-cld::-webkit-scrollbar-thumb{background-color:rgba(0,0,0,.25);border-radius:4px}ytd-watch-flexy[is-two-columns_] #right-tabs .tab-content-cld::-webkit-scrollbar-track{background:transparent}";
 
-  // VideoDeck: animated sidebar tab bar. A JS-driven sliding pill indicator
+  // TubeLoft: animated sidebar tab bar. A JS-driven sliding pill indicator
   // (see the controller near the bottom of this file) moves between tabs with
   // a spring easing; the container is a glass chip and tab content fades in.
   const css_vd_tabs = `
@@ -456,7 +371,7 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
   // runs in the page (MAIN) world as a declared content script.
 
   var css_248z = `
-    /* ── VideoDeck neon progress bar ───────────────────────────── */
+    /* ── TubeLoft neon progress bar ───────────────────────────── */
     .html5-progress-list,
     .ytp-progress-list,
     .video-ads .html5-progress-list,
@@ -859,95 +774,6 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
     }
   };
 
-  const Theme = {
-    setTheme: function(theme = "light", isReload = true) {
-      if (theme === "light") {
-        this.setLight(isReload);
-      } else if (theme === "dark") {
-        this.setDark(isReload);
-      } else {
-        this.setLight(isReload);
-      }
-    },
-    setDark: function(isReload) {
-      this.isDarkTheme(true, isReload);
-    },
-    setLight: function(isReload) {
-      this.isDarkTheme(false, isReload);
-    },
-    reloadYouTube: function() {
-      location.reload();
-    },
-    isDarkTheme: function(enabled, isReload) {
-      const cookies = document.cookie.split("; ");
-      let prefCookie = cookies.find((cookie) => cookie.startsWith("PREF="));
-      let prefValue = prefCookie ? prefCookie.split("=")[1] : "f6=400";
-      prefValue = prefValue.replace(/&f6=\d+/, "").replace(/f6=\d+/, "");
-      const prefix = prefValue ? "&" : "";
-      if (enabled) {
-        prefValue += prefix + "f6=400";
-      } else {
-        prefValue += prefix + "f6=80000";
-      }
-      document.cookie = `PREF=${prefValue}; path=/; domain=.youtube.com; secure`;
-      if (isReload) {
-        this.reloadYouTube();
-      }
-    }
-  };
-
-  const Screenshot = {
-    start: function() {
-      var SF_Codhemeu = "png";
-      var extension = "png";
-      var appendixTitle = "screenshot." + extension;
-      var title;
-      var headerEls = document.querySelectorAll(
-        "h1.title.ytd-video-primary-info-renderer"
-      );
-      function SetTitle() {
-        if (headerEls.length > 0) {
-          title = headerEls[0].innerText.trim();
-          return true;
-        } else {
-          return false;
-        }
-      }
-      if (SetTitle() == false) {
-        headerEls = document.querySelectorAll("h1.watch-title-container");
-        if (SetTitle() == false)
-          title = "";
-      }
-      var player = document.getElementsByClassName("video-stream")[0];
-      var time = player.currentTime;
-      title += " ";
-      let minutes = Math.floor(time / 60);
-      time = Math.floor(time - minutes * 60);
-      if (minutes > 60) {
-        let hours = Math.floor(minutes / 60);
-        minutes -= hours * 60;
-        title += hours + "-";
-      }
-      title += minutes + "-" + time;
-      title += " " + appendixTitle;
-      var canvas = document.createElement("canvas");
-      canvas.width = player.videoWidth;
-      canvas.height = player.videoHeight;
-      canvas.getContext("2d").drawImage(player, 0, 0, canvas.width, canvas.height);
-      var downloadLink = document.createElement("a");
-      downloadLink.download = title;
-      function DownloadBlob(blob) {
-        downloadLink.href = URL.createObjectURL(blob);
-        downloadLink.click();
-      }
-      {
-        canvas.toBlob(async function(blob) {
-          DownloadBlob(blob);
-        }, "image/" + SF_Codhemeu);
-      }
-    }
-  };
-
   const Dialog = function() {
     const dialogBaseStyle = `
       .vd-mask{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999999999999;animation:vd-fadein .15s ease}
@@ -1045,10 +871,6 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
           "function_is_theme_progress_bar_open": "Enable video playback progress bar beautification.",
           "function_is_speed_control_open": "Enable video fast forward (playback speed selectable).",
           "function_is_mark_or_remove_ad_open": "Enable page ad labeling.",
-          "function_is_youtube_downloading_open": "Enable YouTube video downloading.",
-          "download_confirm_message": "Downloading YouTube videos will redirect to third-party websites, which may contain ads. If you don't need this download feature, you can disable it in the settings.",
-          "download_enter_text": "OK",
-          "download_cancel_text": "Cancel"
         }
       },
       "ja": {
@@ -1059,9 +881,6 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
           "function_is_theme_progress_bar_open": "動画再生の進行状況バーの装飾を有効にする。",
           "function_is_speed_control_open": "動画の早送り（再生速度選択可能）を有効にする。",
           "function_is_mark_or_remove_ad_open": "ページ広告のラベリングを有効にする。",
-          "download_confirm_message": "YouTube動画のダウンロードはサードパーティのウェブサイトにリダイレクトされ、広告が含まれている可能性があります。このダウンロード機能が不要な場合は、設定で無効にできます。",
-          "download_enter_text": "OK",
-          "download_cancel_text": "キャンセル"
         }
       },
       "ko": {
@@ -1072,9 +891,6 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
           "function_is_theme_progress_bar_open": "동영상 재생 진행 바 장식 활성화.",
           "function_is_speed_control_open": "동영상 빨리감기(재생 속도 선택 가능) 활성화.",
           "function_is_mark_or_remove_ad_open": "페이지 광고 라벨링 활성화.",
-          "download_confirm_message": "YouTube 동영상을 다운로드하면 제3자 웹사이트로 리디렉션되며, 광고가 포함될 수 있습니다. 이 다운로드 기능이 필요하지 않은 경우 설정에서 비활성화할 수 있습니다.",
-          "download_enter_text": "확인",
-          "download_cancel_text": "취소"
         }
       },
       "ru": {
@@ -1085,10 +901,6 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
           "function_is_theme_progress_bar_open": "Включить улучшение панели прогресса воспроизведения видео.",
           "function_is_speed_control_open": "Включить перемотку видео (выбор скорости воспроизведения).",
           "function_is_mark_or_remove_ad_open": "Включить маркировку рекламы на странице.",
-          "function_is_youtube_downloading_open": "Включить загрузку видео с YouTube.",
-          "download_confirm_message": "Загрузка видео с YouTube перенаправит вас на сторонние сайты, которые могут содержать рекламу. Если вам не нужна эта функция загрузки, вы можете отключить её в настройках.",
-          "download_enter_text": "ОК",
-          "download_cancel_text": "Отмена"
         }
       },
       "id": {
@@ -1099,10 +911,6 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
           "function_is_theme_progress_bar_open": "Aktifkan pempercantik bilah progres pemutaran video.",
           "function_is_speed_control_open": "Aktifkan percepatan video (kecepatan pemutaran dapat dipilih).",
           "function_is_mark_or_remove_ad_open": "Aktifkan pelabelan iklan di halaman.",
-          "function_is_youtube_downloading_open": "Aktifkan pengunduhan video YouTube.",
-          "download_confirm_message": "Mengunduh video YouTube akan mengarahkan ke situs web pihak ketiga yang mungkin berisi iklan. Jika Anda tidak memerlukan fitur unduhan ini, Anda dapat menonaktifkannya di pengaturan.",
-          "download_enter_text": "OK",
-          "download_cancel_text": "Batal"
         }
       },
       "fr": {
@@ -1113,10 +921,6 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
           "function_is_theme_progress_bar_open": "Activer l’embellissement de la barre de progression de la vidéo.",
           "function_is_speed_control_open": "Activer l’avance rapide de la vidéo (vitesse de lecture sélectionnable).",
           "function_is_mark_or_remove_ad_open": "Activer l’étiquetage des publicités sur la page.",
-          "function_is_youtube_downloading_open": "Activer le téléchargement de vidéos YouTube.",
-          "download_confirm_message": "Le téléchargement de vidéos YouTube redirigera vers des sites tiers pouvant contenir des publicités. Si vous n'avez pas besoin de cette fonctionnalité, vous pouvez la désactiver dans les paramètres.",
-          "download_enter_text": "OK",
-          "download_cancel_text": "Annuler"
         }
       },
       "pt": {
@@ -1127,10 +931,6 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
           "function_is_theme_progress_bar_open": "Ativar embelezamento da barra de progresso do vídeo.",
           "function_is_speed_control_open": "Ativar avanço rápido do vídeo (velocidade de reprodução selecionável).",
           "function_is_mark_or_remove_ad_open": "Ativar rotulagem de anúncios na página.",
-          "function_is_youtube_downloading_open": "Ativar o download de vídeos do YouTube.",
-          "download_confirm_message": "O download de vídeos do YouTube redirecionará para sites de terceiros, que podem conter anúncios. Se você não precisar desse recurso, poderá desativá-lo nas configurações.",
-          "download_enter_text": "OK",
-          "download_cancel_text": "Cancelar"
         }
       },
       "tr": {
@@ -1141,10 +941,6 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
           "function_is_theme_progress_bar_open": "Video oynatma ilerleme çubuğu güzelleştirmesini etkinleştir.",
           "function_is_speed_control_open": "Video hızlı oynatmayı etkinleştir (oynatma hızı seçilebilir).",
           "function_is_mark_or_remove_ad_open": "Sayfadaki reklam etiketlemesini etkinleştir.",
-          "function_is_youtube_downloading_open": "YouTube video indirmeyi etkinleştir.",
-          "download_confirm_message": "YouTube videolarını indirmek, reklam içerebilecek üçüncü taraf sitelere yönlendirme yapacaktır. Bu indirme özelliğine ihtiyacınız yoksa, ayarlardan devre dışı bırakabilirsiniz.",
-          "download_enter_text": "Tamam",
-          "download_cancel_text": "İptal"
         }
       },
       "zh-CN": {
@@ -1155,10 +951,6 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
           "function_is_theme_progress_bar_open": "启用视频播放进度条美化。",
           "function_is_speed_control_open": "启用视频快进（播放速度可选择）。",
           "function_is_mark_or_remove_ad_open": "启用页面广告标记。",
-          "function_is_youtube_downloading_open": "启用YouTube视频下载。",
-          "download_confirm_message": "下载YouTube视频将跳转到第三方网站，这些网站可能包含广告。如果您不需要此下载功能，可以在设置中禁用它。",
-          "download_enter_text": "确定",
-          "download_cancel_text": "取消"
         }
       },
       "zh-TW": {
@@ -1169,10 +961,6 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
           "function_is_theme_progress_bar_open": "啟用影片播放進度條美化。",
           "function_is_speed_control_open": "啟用影片快轉（播放速度可選擇）。",
           "function_is_mark_or_remove_ad_open": "啟用頁面廣告標記。",
-          "function_is_youtube_downloading_open": "啟用YouTube影片下載。",
-          "download_confirm_message": "下載YouTube影片將跳轉到第三方網站，這些網站可能包含廣告。如果您不需要此下載功能，可以在設定中禁用它。",
-          "download_enter_text": "確定",
-          "download_cancel_text": "取消"
         }
       }
     },
@@ -1214,313 +1002,6 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
     }
   };
   const ToolBox = {
-    getFunctionState: function() {
-      return StorageUtil.getValue(
-        StorageUtil.keys.youtube.functionState,
-        StorageUtil.getDefaultFunctionState()
-      );
-    },
-    insertStyle: function() {
-      const toolboxStyles = `
-        .vd-toolbox{
-          position:absolute!important;
-          background:var(--yt-spec-static-overlay-background-heavy,rgba(19,19,19,.92))!important;
-          backdrop-filter:blur(10px);
-          -webkit-backdrop-filter:blur(10px);
-          color:#fff!important;
-          border-radius:14px!important;
-          border:1px solid rgba(255,255,255,.08);
-          box-shadow:0 8px 28px rgba(0,0,0,.4)!important;
-          box-sizing:border-box!important;
-          z-index:999999999999!important;
-          display:none;
-          padding:8px!important;
-        }
-        .vd-toolbox .vd-toolbox-grid{
-          display:grid!important;
-          grid-template-columns:repeat(3,1fr)!important;
-          gap:4px!important;
-        }
-        .vd-toolbox .vd-tool-btn{
-          width:34px!important;
-          height:34px!important;
-          background:transparent!important;
-          border:none!important;
-          cursor:pointer!important;
-          color:#fff!important;
-          display:flex!important;
-          align-items:center!important;
-          justify-content:center!important;
-          border-radius:9px!important;
-          transition:background .15s ease;
-        }
-        .vd-toolbox .vd-tool-btn:hover{
-          background:rgba(255,255,255,.14)!important;
-        }
-      `;
-      commonUtil.addStyle(toolboxStyles);
-    },
-    vdIcon: function(parts, options = {}) {
-      const svgNS = "http://www.w3.org/2000/svg";
-      const svg = document.createElementNS(svgNS, "svg");
-      svg.setAttribute("viewBox", options.viewBox || "0 0 24 24");
-      svg.setAttribute("width", options.size || 20);
-      svg.setAttribute("height", options.size || 20);
-      svg.setAttribute("fill", "none");
-      svg.setAttribute("stroke", options.color || "currentColor");
-      svg.setAttribute("stroke-width", options.strokeWidth || 2);
-      svg.setAttribute("stroke-linecap", "round");
-      svg.setAttribute("stroke-linejoin", "round");
-      parts.forEach((part) => {
-        if (typeof part === "string") {
-          const path = document.createElementNS(svgNS, "path");
-          path.setAttribute("d", part);
-          svg.appendChild(path);
-        } else if (part && Array.isArray(part.circle)) {
-          const circle = document.createElementNS(svgNS, "circle");
-          circle.setAttribute("cx", part.circle[0]);
-          circle.setAttribute("cy", part.circle[1]);
-          circle.setAttribute("r", part.circle[2]);
-          svg.appendChild(circle);
-        }
-      });
-      return svg;
-    },
-    genrateSettingSvg: function() {
-      return this.vdIcon([
-        "M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z",
-        { circle: [12, 12, 3] }
-      ]);
-    },
-    genrateToolSvg: function() {
-      return this.vdIcon([
-        "M12 2 2 7l10 5 10-5z",
-        "m2 12 10 5 10-5",
-        "m2 17 10 5 10-5"
-      ], { size: 22, color: "#fff" });
-    },
-    genrateScreenshotSvg: function() {
-      return this.vdIcon([
-        "M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z",
-        { circle: [12, 13, 3] }
-      ]);
-    },
-    genrateSwitchThemeSvg: function() {
-      return this.vdIcon(["M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"]);
-    },
-    genratePictureToPictureSvg: function() {
-      return this.vdIcon([
-        "M2 7a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2z",
-        "M12 12h7v5h-7z"
-      ]);
-    },
-    genrateLoopSvg: function() {
-      return this.vdIcon([
-        "m17 2 4 4-4 4",
-        "M3 11v-1a4 4 0 0 1 4-4h14",
-        "m7 22-4-4 4-4",
-        "M21 13v1a4 4 0 0 1-4 4H3"
-      ]);
-    },
-    genrateNotLoopSvg: function() {
-      return this.vdIcon([
-        "m17 2 4 4-4 4",
-        "M3 11v-1a4 4 0 0 1 4-4h14",
-        "m7 22-4-4 4-4",
-        "M21 13v1a4 4 0 0 1-4 4H3",
-        "m2 2 20 20"
-      ]);
-    },
-    genrateTools: function(parent) {
-      const loopElementId = "_loop_" + Math.ceil(Math.random() * 1e8);
-      this.getFunctionState();
-      const switchTheme = () => {
-        let currentTheme = StorageUtil.getValue(StorageUtil.keys.youtube.theme, null);
-        if (currentTheme == "light" || !currentTheme) {
-          currentTheme = "dark";
-        } else {
-          currentTheme = "light";
-        }
-        StorageUtil.setValue(StorageUtil.keys.youtube.theme, currentTheme);
-        Theme.setTheme(currentTheme, true);
-      };
-      const screenshot = () => {
-        Screenshot.start();
-      };
-      const showSettingDialog = () => {
-        this.showSettingDialog();
-      };
-      const pictureToPicture = () => {
-        const video = document.querySelector("video");
-        if ("pictureInPictureEnabled" in document) {
-          if (!document.pictureInPictureElement) {
-            video.requestPictureInPicture().then(() => {
-            }).catch((error) => {
-            });
-          }
-        }
-      };
-      let videoLoopSate = StorageUtil.getValue(StorageUtil.keys.youtube.videoLoop, false);
-      let videoLoopInterval = null;
-      const videoLoopEvent = () => {
-        if (videoLoopInterval) {
-          clearInterval(videoLoopInterval);
-          videoLoopInterval = null;
-        }
-        const videoFull = document.querySelector("#movie_player > div.html5-video-container > video");
-        if (videoFull != void 0) {
-          videoLoopInterval = setInterval(() => {
-            if (videoLoopSate) {
-              document.querySelector("#movie_player > div.html5-video-container > video").setAttribute("loop", "true");
-            } else {
-              document.querySelector("#movie_player > div.html5-video-container > video").removeAttribute("loop");
-            }
-          }, 1e3);
-        }
-      };
-      const videoLoop = () => {
-        const target = document.querySelector("#" + loopElementId);
-        let svg = null;
-        if (videoLoopSate) {
-          videoLoopSate = false;
-          svg = this.genrateNotLoopSvg();
-        } else {
-          videoLoopSate = true;
-          svg = this.genrateLoopSvg();
-        }
-        target.replaceChildren(svg);
-        StorageUtil.setValue(StorageUtil.keys.youtube.videoLoop, videoLoopSate);
-        videoLoopEvent();
-      };
-      videoLoopEvent();
-      const btns = [
-        {
-          "tagName": "div",
-          "title": "Settings",
-          "classname": "vd-tool-btn",
-          "onclick": showSettingDialog,
-          "icon": this.genrateSettingSvg()
-        },
-        {
-          "tagName": "div",
-          "title": "Toggle light / dark theme",
-          "classname": "vd-tool-btn",
-          "onclick": switchTheme,
-          "icon": this.genrateSwitchThemeSvg()
-        },
-        {
-          "tagName": "div",
-          "title": "Screenshot",
-          "classname": "vd-tool-btn",
-          "onclick": screenshot,
-          "icon": this.genrateScreenshotSvg()
-        },
-        {
-          "tagName": "div",
-          "title": "Picture-in-picture",
-          "classname": "vd-tool-btn",
-          "onclick": pictureToPicture,
-          "icon": this.genratePictureToPictureSvg()
-        },
-        {
-          "tagName": "div",
-          "title": "Loop",
-          "classname": "vd-tool-btn",
-          "id": loopElementId,
-          "onclick": videoLoop,
-          "icon": videoLoopSate ? this.genrateLoopSvg() : this.genrateNotLoopSvg()
-        }
-      ];
-      for (let i = 0; i < btns.length; i++) {
-        let item = btns[i];
-        const element = document.createElement(item.tagName);
-        element.className = item.classname;
-        element.setAttribute("title", item.title);
-        if (item.hasOwnProperty("icon")) {
-          element.appendChild(item.icon);
-        }
-        if (item.hasOwnProperty("id")) {
-          element.id = item.id;
-        }
-        if (item.hasOwnProperty("onclick")) {
-          element.onclick = item.onclick;
-        }
-        if (item.hasOwnProperty("style")) {
-          element.setAttribute("style", item.style);
-        }
-        parent.appendChild(element);
-      }
-    },
-    genrateBoxContainer: function(button, player) {
-      const toolBoxContainer = document.createElement("div");
-      toolBoxContainer.id = "videodeck-toolbox";
-      toolBoxContainer.className = "vd-toolbox";
-      const tools = document.createElement("div");
-      tools.className = "vd-toolbox-grid";
-      this.genrateTools(tools);
-      toolBoxContainer.appendChild(tools);
-      player.appendChild(toolBoxContainer);
-      let isHovering = false;
-      button.addEventListener("mouseenter", () => {
-        toolBoxContainer.style.display = "block";
-        var containerRect = player.getBoundingClientRect();
-        var buttonRect = button.getBoundingClientRect();
-        var toolBoxContainerRect = toolBoxContainer.getBoundingClientRect();
-        var left = buttonRect.left - containerRect.left - toolBoxContainerRect.width / 2 + buttonRect.width / 2;
-        var top = buttonRect.top - containerRect.top - toolBoxContainer.clientHeight;
-        toolBoxContainer.style.left = `${left}px`;
-        toolBoxContainer.style.top = `${top}px`;
-      });
-      button.addEventListener("mouseleave", () => {
-        isHovering = false;
-        setTimeout(() => {
-          if (!isHovering) {
-            toolBoxContainer.style.display = "none";
-          }
-        }, 100);
-      });
-      toolBoxContainer.addEventListener("mouseenter", () => {
-        isHovering = true;
-      });
-      toolBoxContainer.addEventListener("mouseleave", () => {
-        isHovering = false;
-        toolBoxContainer.style.display = "none";
-      });
-    },
-    genrateBox: function() {
-      return new Promise((resolve) => {
-        const buttonId = "videodeck-trigger";
-        const boxContainer = document.createElement("div");
-        boxContainer.className = "ytp-button";
-        boxContainer.id = buttonId;
-        boxContainer.setAttribute("style", `position: relative;display: inline-block;width: 48px;height: 100%;`);
-        const boxInner = document.createElement("div");
-        boxInner.setAttribute("style", `position: absolute;width: 100%;height: 100%;	`);
-        const boxActiveButton = document.createElement("button");
-        boxActiveButton.setAttribute("style", `background-color: transparent;width: 100%;height: 100%;outline: none;flex: 1 1 0%;display: flex;-webkit-box-align: center;align-items: center;-webkit-box-pack: center;justify-content: center;border: none;padding: 0px;cursor: pointer;`);
-        boxContainer.appendChild(boxInner);
-        boxInner.appendChild(boxActiveButton);
-        boxActiveButton.appendChild(this.genrateToolSvg());
-        const genrateHtml = () => {
-          const player = document.querySelector("#movie_player");
-          if (player) {
-            const rightControls = player.querySelector(".ytp-right-controls");
-            if (rightControls) {
-              rightControls.prepend(boxContainer);
-              this.genrateBoxContainer(boxContainer, player);
-            }
-          }
-        };
-        const interval = setInterval(() => {
-          if (!document.querySelector("#" + buttonId)) {
-            genrateHtml();
-          } else {
-            resolve();
-            clearInterval(interval);
-          }
-        }, 500);
-      });
-    },
     showSettingDialog: function() {
       const functionState = StorageUtil.getValue(StorageUtil.keys.youtube.functionState, {
         isOpenCommentTable: true,
@@ -1610,13 +1091,7 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
           GM_registerMenuCommand("Setting", () => {
             this.showSettingDialog();
           });
-          commonUtil.onPageLoad(async () => {
-            const theme = StorageUtil.getValue(StorageUtil.keys.youtube.theme, null);
-            if (theme) {
-              Theme.setTheme(theme, false);
-            }
-            this.insertStyle();
-            await this.genrateBox();
+          commonUtil.onPageLoad(() => {
             resolve();
           });
         } else {
@@ -1689,7 +1164,7 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
     document.documentElement.appendChild(style);
   })();
 
-  // VideoDeck: sliding pill indicator for the sidebar tab bar. The TabView
+  // TubeLoft: sliding pill indicator for the sidebar tab bar. The TabView
   // engine toggles `.active` on the tab buttons; this controller mirrors that
   // state onto a single floating pill inside #material-tabs and animates it
   // between tabs (spring easing handled by the #vd-tab-indicator CSS).

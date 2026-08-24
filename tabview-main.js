@@ -25,6 +25,9 @@
 // SOFTWARE.
 //
 // Original source: https://github.com/tabview-youtube/Tabview-Youtube (MIT)
+//
+// Modifications for TubeLoft for YouTube (MV3 port, UI rework, watchdog
+// fixes): Copyright (c) 2026 vibinfang. Licensed under the MIT license.
 // The `communicationKey` parameter is vestigial (unused inside the function
 // body) but is kept for fidelity with the original implementation.
 (() => {
@@ -3460,7 +3463,7 @@
               attrs: ["tyt-info-renderer", "tyt-info-renderer-back", "tyt-main-info"].filter((a) => r.hasAttribute(a)),
               parent: r.parentElement ? r.parentElement.tagName + (r.parentElement.id ? "#" + r.parentElement.id : "") : null
             }));
-            console.warn("[VideoDeck] info tab recovery exhausted at " + stage, JSON.stringify({
+            console.warn("[TubeLoft] info tab recovery exhausted at " + stage, JSON.stringify({
               infoExpander: !!elements.infoExpander,
               back: !!elements.infoExpanderRendererBack,
               front: !!elements.infoExpanderRendererFront,
@@ -3498,7 +3501,7 @@
                 elements.infoExpander = null;
                 stuck.remove();
                 wdSyncTries = 0;
-                console.warn("[VideoDeck] info tab: dropped stuck description clone, rebuilding");
+                console.warn("[TubeLoft] info tab: dropped stuck description clone, rebuilding");
               } else if (back) {
                 Promise.resolve(back).then(eventMap["ytd-expandable-video-description-body-renderer::attached"]).catch(console.warn);
               }
@@ -3555,7 +3558,7 @@
                   el.removeAttribute("id");
                 tabInfo.assignChildren111(null, fb, null);
                 Promise.resolve(lockSet["infoFixLock"]).then(infoFix).catch(console.warn);
-                console.warn("[VideoDeck] info tab: rendered description preview fallback");
+                console.warn("[TubeLoft] info tab: rendered description preview fallback");
               }
             }
           }
@@ -3565,7 +3568,7 @@
               wdCommentSwitched = true;
               try {
                 switchToTab("#tab-comments");
-                console.warn("[VideoDeck] info tab empty — switched to comments as fallback");
+                console.warn("[TubeLoft] info tab empty — switched to comments as fallback");
               } catch (e) {
               }
             }

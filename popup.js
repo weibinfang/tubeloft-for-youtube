@@ -1,4 +1,7 @@
-// VideoDeck — watch history popup.
+// TubeLoft for YouTube — watch history popup.
+// Copyright (c) 2026 vibinfang. Licensed under the MIT license.
+//
+// TubeLoft — watch history popup.
 // Fetches youtube.com/feed/history with the browser's YouTube cookies
 // (granted by host_permissions), parses the embedded ytInitialData JSON via a
 // structure-agnostic recursive walk (immune to YouTube layout changes), and
@@ -251,7 +254,7 @@ const loadAccount = async () => {
         }
       );
       if (!res.ok) {
-        console.warn("[VideoDeck] account endpoint", base, "HTTP", res.status);
+        console.warn("[TubeLoft] account endpoint", base, "HTTP", res.status);
         continue;
       }
       const data = await res.json();
@@ -260,7 +263,7 @@ const loadAccount = async () => {
       // account switcher items also carry name + photo
       if (!hdr) hdr = findFirstByKey(data, "accountItemRenderer");
       if (!hdr) {
-        console.warn("[VideoDeck] account response had no known header keys:",
+        console.warn("[TubeLoft] account response had no known header keys:",
           Object.keys(data).slice(0, 10));
         continue;
       }
@@ -274,13 +277,13 @@ const loadAccount = async () => {
       if (name) state.account.name = name;
       if (avatar) state.account.avatar = avatar;
       if (email) state.account.email = email;
-      console.info("[VideoDeck] account loaded from", base.split("/").pop());
+      console.info("[TubeLoft] account loaded from", base.split("/").pop());
       return;
     } catch (err) {
-      console.warn("[VideoDeck] account endpoint", base, "failed:", err.message);
+      console.warn("[TubeLoft] account endpoint", base, "failed:", err.message);
     }
   }
-  console.warn("[VideoDeck] account endpoints all failed; topbar avatar =", state.account.avatar || "none");
+  console.warn("[TubeLoft] account endpoints all failed; topbar avatar =", state.account.avatar || "none");
 };
 
 const renderAccount = () => {
@@ -429,7 +432,7 @@ els.more.addEventListener("click", async () => {
   try {
     await loadMore();
   } catch (err) {
-    console.warn("[VideoDeck] loadMore failed:", err);
+    console.warn("[TubeLoft] loadMore failed:", err);
   } finally {
     setLoading(false);
     render();
@@ -461,7 +464,7 @@ const init = async (isRefresh) => {
   try {
     await loadInitial();
   } catch (err) {
-    console.warn("[VideoDeck] history fetch failed:", err);
+    console.warn("[TubeLoft] history fetch failed:", err);
     els.state.innerHTML =
       `<span class="vd-err">加载失败：${esc(err.message)}</span><br>` +
       "请检查网络或 YouTube 登录状态<button>重试</button>";
