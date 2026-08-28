@@ -3541,12 +3541,12 @@
             Promise.resolve(renderer).then(eventMap["ytd-expandable-video-description-body-renderer::attached"]).catch(console.warn);
           // Last resorts, in order of preference:
           // 1) 2026 YouTube sometimes never delivers the description renderer
-          //    (engagement-panel lazy fetch) — after ~18s with nothing to
+          //    (engagement-panel lazy fetch) — after ~8.5s with nothing to
           //    recover from, render the metadata description preview
           //    directly into the tab instead of leaving it empty.
           // 2) If even that is unavailable but comments loaded, switch the
           //    sidebar to the comments tab once so it never sits blank.
-          if (wdFailStreak >= 15 && !tabInfo.querySelector("[vd-info-fallback]")) {
+          if (wdFailStreak >= 7 && !tabInfo.querySelector("[vd-info-fallback]")) {
             const actionable = elements.infoExpander || document.querySelector("ytd-expandable-video-description-body-renderer[tyt-info-renderer]") || (renderer && insp(renderer).data);
             if (!actionable) {
               const inline = document.querySelector("ytd-watch-metadata ytd-text-inline-expander");
@@ -3562,7 +3562,7 @@
               }
             }
           }
-          if (wdFailStreak >= 50 && !wdCommentSwitched && !tabInfo.querySelector("[vd-info-fallback], [tyt-main-info]")) {
+          if (wdFailStreak >= 30 && !wdCommentSwitched && !tabInfo.querySelector("[vd-info-fallback], [tyt-main-info]")) {
             const tabComments = document.querySelector("#tab-comments");
             if (tabComments && tabComments.childElementCount > 0) {
               wdCommentSwitched = true;

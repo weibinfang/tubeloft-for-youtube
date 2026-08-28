@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>TubeLoft · 观看记录</title>
+  <title>TubeLoft</title>
   <link rel="stylesheet" href="popup.css" />
 </head>
 <body>
@@ -11,21 +11,21 @@
       <span id="vd-fallback-dot" class="vd-dot"></span>
       <img id="vd-avatar" class="vd-avatar hidden" alt="" />
       <div class="vd-hd-texts">
-        <div class="vd-hd-title">观看记录 <span id="vd-count" class="vd-count"></span></div>
+        <div class="vd-hd-title"><span id="vd-title"></span> <span id="vd-count" class="vd-count"></span></div>
         <div id="vd-account" class="vd-account hidden"></div>
       </div>
     </div>
-    <button id="vd-refresh" class="vd-icon-btn" title="刷新">⟳</button>
+    <button id="vd-refresh" class="vd-icon-btn" title="">⟳</button>
   </header>
 
   <div class="vd-search">
-    <input id="vd-search-input" type="search" placeholder="搜索已加载的记录…" />
+    <input id="vd-search-input" type="search" placeholder="" />
   </div>
 
   <main id="vd-list" class="vd-list" aria-live="polite"></main>
 
   <div id="vd-more-wrap" class="vd-more-wrap hidden">
-    <button id="vd-more" class="vd-more">加载更多</button>
+    <button id="vd-more" class="vd-more"></button>
   </div>
 
   <div id="vd-state" class="vd-state"></div>

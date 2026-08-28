@@ -9,6 +9,104 @@
 
 const HISTORY_URL = "https://www.youtube.com/feed/history";
 
+/* ── UI strings: follow YouTube's own language ───────────── */
+
+const STRINGS = {
+  en:     { title: "History", count: (n) => `${n} items`, search: "Search loaded items…", more: "Show more", loading: "Loading…", empty: "No watch history", noMatch: "No matches in loaded items — try \"Show more\" first", signedOut: "Not signed in to YouTube<br>Please sign in to YouTube, then refresh", err: "Failed to load", retry: "Retry", refresh: "Refresh" },
+  "zh-CN": { title: "观看记录", count: (n) => `${n} 条`, search: "搜索已加载的记录…", more: "加载更多", loading: "加载中…", empty: "没有观看记录", noMatch: "已加载的记录中没有匹配项，试试「加载更多」后搜索", signedOut: "未检测到 YouTube 登录状态<br>请先在浏览器中登录 YouTube，再点击刷新", err: "加载失败", retry: "重试", refresh: "刷新" },
+  "zh-TW": { title: "觀看紀錄", count: (n) => `${n} 部`, search: "搜尋已載入的記錄…", more: "顯示更多", loading: "載入中…", empty: "沒有觀看紀錄", noMatch: "已載入的記錄中沒有相符項目，請試試「顯示更多」後再搜尋", signedOut: "未偵測到 YouTube 登入狀態<br>請先在瀏覽器中登入 YouTube，再重新整理", err: "載入失敗", retry: "重試", refresh: "重新整理" },
+  ja:     { title: "履歴", count: (n) => `${n} 件`, search: "読み込んだ履歴を検索…", more: "もっと見る", loading: "読み込み中…", empty: "視聴履歴がありません", noMatch: "読み込んだ履歴に一致するものはありません。「もっと見る」の後にもう一度お試しください", signedOut: "YouTube にログインしていません<br>ブラウザで YouTube にログインしてから再読み込みしてください", err: "読み込みに失敗しました", retry: "再試行", refresh: "再読み込み" },
+  ko:     { title: "시청 기록", count: (n) => `${n}개`, search: "불러온 기록 검색…", more: "더보기", loading: "불러오는 중…", empty: "시청 기록이 없습니다", noMatch: "불러온 기록에 일치하는 항목이 없습니다. '더보기'를 누른 후 다시 검색해 보세요", signedOut: "YouTube 로그인 상태가 아닙니다<br>브라우저에서 YouTube에 로그인한 후 새로고침해 주세요", err: "불러오기 실패", retry: "다시 시도", refresh: "새로고침" },
+  es:     { title: "Historial", count: (n) => `${n} elementos`, search: "Buscar en lo cargado…", more: "Mostrar más", loading: "Cargando…", empty: "No hay historial de visualizaciones", noMatch: "Sin coincidencias en lo cargado: prueba «Mostrar más» y vuelve a buscar", signedOut: "No has iniciado sesión en YouTube<br>Inicia sesión en YouTube y actualiza", err: "Error al cargar", retry: "Reintentar", refresh: "Actualizar" },
+  "es-419": { title: "Historial", count: (n) => `${n} elementos`, search: "Buscar en lo cargado…", more: "Mostrar más", loading: "Cargando…", empty: "No hay historial de visualizaciones", noMatch: "Sin coincidencias en lo cargado: prueba «Mostrar más» y vuelve a buscar", signedOut: "No iniciaste sesión en YouTube<br>Inicia sesión en YouTube y vuelve a intentar", err: "Error al cargar", retry: "Reintentar", refresh: "Actualizar" },
+  pt:     { title: "Histórico", count: (n) => `${n} itens`, search: "Pesquisar no que foi carregado…", more: "Mostrar mais", loading: "Carregando…", empty: "Sem histórico de exibição", noMatch: "Sem correspondências no que foi carregado — tente «Mostrar mais» e pesquise de novo", signedOut: "Você não está conectado ao YouTube<br>Faça login no YouTube e atualize", err: "Falha ao carregar", retry: "Tentar novamente", refresh: "Atualizar" },
+  "pt-PT": { title: "Histórico", count: (n) => `${n} itens`, search: "Pesquisar no que foi carregado…", more: "Mostrar mais", loading: "A carregar…", empty: "Sem histórico de visualizações", noMatch: "Sem correspondências no que foi carregado — tente «Mostrar mais» e pesquise de novo", signedOut: "Não tem sessão iniciada no YouTube<br>Inicie sessão no YouTube e atualize", err: "Falha ao carregar", retry: "Tentar novamente", refresh: "Atualizar" },
+  fr:     { title: "Historique", count: (n) => `${n} éléments`, search: "Rechercher dans l’historique chargé…", more: "Afficher plus", loading: "Chargement…", empty: "Aucun historique des vidéos regardées", noMatch: "Aucun résultat dans l’historique chargé — essayez « Afficher plus », puis relancez la recherche", signedOut: "Aucune session YouTube détectée<br>Connectez-vous à YouTube, puis actualisez", err: "Échec du chargement", retry: "Réessayer", refresh: "Actualiser" },
+  de:     { title: "Verlauf", count: (n) => `${n} Einträge`, search: "Geladene Einträge durchsuchen…", more: "Mehr laden", loading: "Wird geladen…", empty: "Kein Wiedergabeverlauf", noMatch: "Keine Treffer in den geladenen Einträgen — lade mehr und versuche es erneut", signedOut: "Keine YouTube-Anmeldung erkannt<br>Melde dich im Browser bei YouTube an und aktualisiere", err: "Laden fehlgeschlagen", retry: "Erneut versuchen", refresh: "Aktualisieren" },
+  it:     { title: "Cronologia", count: (n) => `${n} elementi`, search: "Cerca negli elementi caricati…", more: "Mostra altro", loading: "Caricamento…", empty: "Nessuna cronologia delle visualizzazioni", noMatch: "Nessuna corrispondenza negli elementi caricati: prova «Mostra altro» e riprova", signedOut: "Accesso a YouTube non rilevato<br>Accedi a YouTube e aggiorna", err: "Caricamento non riuscito", retry: "Riprova", refresh: "Aggiorna" },
+  ru:     { title: "История", count: (n) => `${n} эл.`, search: "Поиск в загруженных записях…", more: "Показать ещё", loading: "Загрузка…", empty: "Нет истории просмотров", noMatch: "Совпадений нет. Нажмите «Показать ещё» и повторите поиск", signedOut: "Вы не вошли в YouTube<br>Войдите в YouTube в браузере и обновите", err: "Не удалось загрузить", retry: "Повторить", refresh: "Обновить" },
+  uk:     { title: "Історія", count: (n) => `${n} ел.`, search: "Пошук серед завантажених записів…", more: "Показати більше", loading: "Завантаження…", empty: "Немає історії переглядів", noMatch: "Збігів немає. Натисніть «Показати більше» та повторіть пошук", signedOut: "Виявлено вхід у YouTube відсутнім<br>Увійдіть в YouTube і оновіть", err: "Не вдалося завантажити", retry: "Повторити", refresh: "Оновити" },
+  pl:     { title: "Historia", count: (n) => `${n} elem.`, search: "Szukaj w załadowanych…", more: "Pokaż więcej", loading: "Ładowanie…", empty: "Brak historii oglądania", noMatch: "Brak wyników wśród załadowanych — kliknij «Pokaż więcej» i spróbuj ponownie", signedOut: "Nie wykryto zalogowania do YouTube<br>Zaloguj się w YouTube i odśwież", err: "Nie udało się załadować", retry: "Spróbuj ponownie", refresh: "Odśwież" },
+  nl:     { title: "Geschiedenis", count: (n) => `${n} items`, search: "Zoeken in geladen items…", more: "Meer laden", loading: "Laden…", empty: "Geen kijkgeschiedenis", noMatch: "Geen overeenkomsten — laad meer en probeer opnieuw", signedOut: "Niet ingelogd op YouTube<br>Log in bij YouTube en vernieuw", err: "Laden mislukt", retry: "Opnieuw proberen", refresh: "Vernieuwen" },
+  tr:     { title: "Geçmiş", count: (n) => `${n} öğe`, search: "Yüklenenlerde ara…", more: "Daha fazla göster", loading: "Yükleniyor…", empty: "İzleme geçmişi yok", noMatch: "Eşleşme yok. «Daha fazla göster»e tıklayıp tekrar deneyin", signedOut: "YouTube oturumu algılanmadı<br>Tarayıcıda YouTube'a giriş yapıp yenileyin", err: "Yüklenemedi", retry: "Tekrar dene", refresh: "Yenile" },
+  ar:     { title: "السجلّ", count: (n) => `${n} عنصرًا`, search: "البحث في العناصر المحمّلة…", more: "عرض المزيد", loading: "جارٍ التحميل…", empty: "لا يوجد سجلّ مشاهدة", noMatch: "لا نتائج مطابقة، جرّب «عرض المزيد» ثم ابحث مجددًا", signedOut: "لم يتم رصد تسجيل الدخول إلى YouTube<br>سجّل الدخول إلى YouTube ثم أعد التحميل", err: "فشل التحميل", retry: "إعادة المحاولة", refresh: "تحديث" },
+  hi:     { title: "इतिहास", count: (n) => `${n} आइटम`, search: "लोड किए गए आइटम खोजें…", more: "और दिखाएं", loading: "लोड हो रहा है…", empty: "कोई देखने का इतिहास नहीं", noMatch: "कोई मेल नहीं मिला — «और दिखाएं» पर क्लिक करके फिर खोजें", signedOut: "YouTube साइन-इन स्थिति नहीं मिली<br>ब्राउज़र में YouTube में साइन इन करके रीफ़्रेश करें", err: "लोड नहीं हो सका", retry: "फिर कोशिश करें", refresh: "रीफ़्रेश करें" },
+  th:     { title: "ประวัติ", count: (n) => `${n} รายการ`, search: "ค้นหารายการที่โหลดแล้ว…", more: "แสดงเพิ่มเติม", loading: "กำลังโหลด…", empty: "ไม่มีประวัติการดู", noMatch: "ไม่พบรายการที่ตรงกัน ลองคลิก «แสดงเพิ่มเติม» แล้วค้นหาอีกครั้ง", signedOut: "ไม่พบการลงชื่อเข้าใช้ YouTube<br>กรุณาลงชื่อเข้าใช้ YouTube แล้วรีเฟรช", err: "โหลดไม่สำเร็จ", retry: "ลองอีกครั้ง", refresh: "รีเฟรช" },
+  vi:     { title: "Nhật ký", count: (n) => `${n} mục`, search: "Tìm trong các mục đã tải…", more: "Xem thêm", loading: "Đang tải…", empty: "Không có nhật ký xem", noMatch: "Không có kết quả phù hợp — thử «Xem thêm» rồi tìm lại", signedOut: "Chưa phát hiện đăng nhập YouTube<br>Hãy đăng nhập YouTube rồi tải lại", err: "Không tải được", retry: "Thử lại", refresh: "Tải lại" },
+  id:     { title: "Histori", count: (n) => `${n} item`, search: "Telusuri item yang dimuat…", more: "Tampilkan lainnya", loading: "Memuat…", empty: "Tidak ada histori tontonan", noMatch: "Tidak ada yang cocok — coba «Tampilkan lainnya» lalu cari lagi", signedOut: "Belum login ke YouTube<br>Login ke YouTube lalu muat ulang", err: "Gagal memuat", retry: "Coba lagi", refresh: "Muat ulang" },
+  ms:     { title: "Sejarah", count: (n) => `${n} item`, search: "Cari item yang dimuatkan…", more: "Tunjukkan lagi", loading: "Memuatkan…", empty: "Tiada sejarah tontonan", noMatch: "Tiada padanan — cuba «Tunjukkan lagi» dan cari semula", signedOut: "Tiada log masuk YouTube dikesan<br>Log masuk ke YouTube kemudian muat semula", err: "Gagal memuatkan", retry: "Cuba semula", refresh: "Muat semula" },
+  "zh-HK": { title: "觀看記錄", count: (n) => `${n} 部影片`, search: "搜尋已載入的記錄…", more: "顯示更多", loading: "載入中…", empty: "沒有觀看記錄", noMatch: "已載入的記錄沒有相符項目，請按「顯示更多」後再試", signedOut: "未偵測到 YouTube 登入狀態<br>請先在瀏覽器登入 YouTube，然後重新整理", err: "載入失敗", retry: "重試", refresh: "重新整理" },
+  "pt-BR": { title: "Histórico", count: (n) => `${n} itens`, search: "Pesquisar no que foi carregado…", more: "Mostrar mais", loading: "Carregando…", empty: "Sem histórico de exibição", noMatch: "Sem correspondências no que foi carregado — tente «Mostrar mais» e pesquise de novo", signedOut: "Você não está conectado ao YouTube<br>Faça login no YouTube e atualize", err: "Falha ao carregar", retry: "Tentar novamente", refresh: "Atualizar" }
+};
+
+/* matches YouTube's own hl codes, including variants like "en-IN", "fr-CA" */
+const pickStrings = (hl) => {
+  const h = (hl || "").toLowerCase();
+  const direct = Object.keys(STRINGS).find((k) => k.toLowerCase() === h);
+  if (direct) return STRINGS[direct];
+  const base = h.split("-")[0];
+  const byBase = Object.keys(STRINGS).find(
+    (k) => k.toLowerCase().split("-")[0] === base
+  );
+  return STRINGS[byBase] || STRINGS.en;
+};
+
+/* default = English; swapped in once YouTube's real hl is known */
+let t = STRINGS.en;
+
+/* YouTube's <html lang> uses script subtags (zh-Hans-CN / zh-Hant-TW) — map
+   them onto the hl codes our string table keys on; everything else passes. */
+const normalizeSiteLang = (lang) => {
+  const l = String(lang || "").toLowerCase();
+  if (l.startsWith("zh-hans")) return "zh-CN";
+  if (l.startsWith("zh-hant")) return "zh-TW";
+  return lang || "";
+};
+
+const saveSiteLang = (hl) => {
+  try {
+    chrome.storage.local.set({ vdSiteLang: hl }, () => void chrome.runtime.lastError);
+  } catch (e) { /* storage unavailable */ }
+};
+
+/* Apply the language cached from the last visited YouTube page so the popup
+   opens already localized, before the history fetch resolves. Never calls
+   render(): while items are still loading the state area shows the skeleton. */
+const applyCachedLanguage = () => {
+  try {
+    chrome.storage.local.get("vdSiteLang", (stored) => {
+      if (chrome.runtime.lastError || state.hl) return; // fetch already won
+      const hl = normalizeSiteLang(stored && stored.vdSiteLang);
+      if (!hl) return;
+      state.hl = hl;
+      t = pickStrings(hl);
+      applyStrings();
+    });
+  } catch (e) { /* storage unavailable */ }
+};
+
+const applyStrings = () => {
+  document.documentElement.lang = state.hl || "en";
+  document.title = `TubeLoft · ${t.title}`;
+  const titleEl = document.getElementById("vd-title");
+  if (titleEl) titleEl.textContent = state.historyLabel || t.title;
+  els.refresh.title = t.refresh;
+  els.search.placeholder = t.search;
+};
+
+/* pull YouTube's own localized "History" label out of the page data */
+const findHistoryLabel = (node) => {
+  const re = /hist|记录|紀錄|履歴|시청/i;
+  const mf = node.microformat?.pageMicroformatRenderer?.title?.simpleText;
+  if (mf && re.test(mf)) return mf;
+  const br = findFirstByKey(node, "browseEndpoint");
+  const bt = br?.browseEndpointSupportedMetadataRenderer?.title?.simpleText;
+  if (bt && re.test(bt)) return bt;
+  const tab = findFirstByKey(node, "tabRenderer");
+  if (tab && tab.title && re.test(String(tab.title))) return tab.title;
+  return "";
+};
+
 const els = {
   list: document.getElementById("vd-list"),
   state: document.getElementById("vd-state"),
@@ -28,6 +126,9 @@ const state = {
   continuation: null,
   apiKey: "",
   clientVersion: "2.20240101.00.00",
+  hl: "",
+  gl: "",
+  historyLabel: "",
   query: "",
   loading: false,
   signedOut: false,
@@ -99,7 +200,7 @@ const findSignedOut = (node) => {
   }
   if (node.messageRenderer) {
     const msg = node.messageRenderer.text?.runs?.[0]?.text || "";
-    if (/账号|sign in|登录|觀看記錄|watch history/i.test(msg)) return true;
+    if (/账号|登录|觀看記錄|观看记录|觀看紀錄|視聴履歴|시청 기록|hist|verlauf|cronolog|histor|istòr|geçmiş|sign in|iniciar sesi|anmelden|se connecter|ログイン|로그인|войти|зайти|accedi|log in/i.test(msg)) return true;
   }
   for (const k of Object.keys(node)) { if (findSignedOut(node[k])) return true; }
   return false;
@@ -140,9 +241,10 @@ const fromLockup = (lu) => {
     videoId: lu.contentId,
     title: meta.title?.content || "",
     channel: parts[0] || "",
-    views: parts.find((p) => /观看|view/i.test(p)) || "",
+    // language-agnostic split: time units → timestamp, other numeric parts → view count
+    views: parts.find((p) => /\d/.test(p) && !/[年月天日時分秒]|\b(ago|day|days|week|weeks|month|months|year|years|hour|hours|minute|minutes|second|seconds|sec|min)\b/i.test(p)) || "",
     duration: "",
-    when: parts.find((p) => /前|ago/i.test(p)) || parts[parts.length - 1] || ""
+    when: parts.find((p) => /[年月天日時分秒]|\b(ago|day|days|week|weeks|month|months|year|years|hour|hours|minute|minutes|second|seconds)\b/i.test(p)) || parts[parts.length - 1] || ""
   };
 };
 
@@ -175,6 +277,15 @@ const loadInitial = async () => {
   state.apiKey = (html.match(/"INNERTUBE_API_KEY":"([^"]+)"/) || [])[1] || state.apiKey;
   state.clientVersion =
     (html.match(/"INNERTUBE_CLIENT_VERSION":"([^"]+)"/) || [])[1] || state.clientVersion;
+  // the page itself is served in the visitor's YouTube language — reuse it
+  const newHl = (html.match(/"hl":"([^"]+)"/) || [])[1] || "";
+  const newGl = (html.match(/"gl":"([^"]+)"/) || [])[1] || "";
+  if (newHl) {
+    state.hl = newHl;
+    state.gl = newGl;
+    t = pickStrings(newHl);
+    saveSiteLang(newHl);
+  }
 
   const data =
     extractJson(html, /var ytInitialData\s*=\s*(\{[\s\S]*?\});\s*<\/script>/) ||
@@ -184,13 +295,14 @@ const loadInitial = async () => {
     // page structure changed entirely
     state.continuation = null;
     if (findSignedOutFromHtml(html)) { state.signedOut = true; return 0; }
-    throw new Error("无法从页面提取数据（ytInitialData 缺失）");
+    throw new Error("ytInitialData missing");
   }
 
   const renderers = [];
   collectVideoRenderers(data, renderers);
   state.signedOut = renderers.length === 0 && findSignedOut(data);
   state.continuation = findContinuationToken(data);
+  state.historyLabel = findHistoryLabel(data) || state.historyLabel;
   // topbar avatar as a fallback when the account_menu endpoint is unavailable
   const avatarBtn = findFirstByKey(data, "avatarButtonViewModel");
   if (avatarBtn) {
@@ -231,8 +343,8 @@ const loadAccount = async () => {
       client: {
         clientName: "WEB",
         clientVersion: state.clientVersion,
-        hl: "zh-CN",
-        gl: "TW"
+        hl: state.hl || undefined,
+        gl: state.gl || undefined
       }
     },
     deviceTheme: "DEVICE_THEME_PRESET",
@@ -301,7 +413,7 @@ const renderAccount = () => {
 };
 
 const findSignedOutFromHtml = (html) =>
-  /无法查看观看记录|观看记录已关闭|sign in to view your watch history/i.test(html);
+  /无法查看观看记录|觀看紀錄已關閉|观看记录已关闭|no watch history|sign in to (view|verify).*watch history|inicia sesi\u00f3n para ver tu historial|melde dich an, um deinen verlauf/i.test(html);
 
 const loadMore = async () => {
   if (!state.continuation || !state.apiKey) return 0;
@@ -318,8 +430,8 @@ const loadMore = async () => {
         client: {
           clientName: "WEB",
           clientVersion: state.clientVersion,
-          hl: "zh-CN",
-          gl: "TW"
+          hl: state.hl || undefined,
+          gl: state.gl || undefined
         }
       },
       continuation: state.continuation
@@ -370,16 +482,15 @@ const render = () => {
       )
     : state.items;
 
-  els.count.textContent = state.items.length ? `${state.items.length} 条` : "";
+  els.count.textContent = state.items.length ? t.count(state.items.length) : "";
 
   if (state.items.length === 0) {
     els.list.innerHTML = "";
     els.moreWrap.classList.add("hidden");
     if (state.signedOut) {
-      els.state.innerHTML =
-        '未检测到 YouTube 登录状态<br>请先在浏览器中登录 YouTube，再点击刷新';
+      els.state.innerHTML = t.signedOut;
     } else {
-      els.state.textContent = "没有观看记录";
+      els.state.textContent = t.empty;
     }
     return;
   }
@@ -387,14 +498,14 @@ const render = () => {
   els.state.textContent = "";
   els.list.innerHTML = visible.map(itemHtml).join("");
   if (q && visible.length === 0) {
-    els.state.textContent = "已加载的记录中没有匹配项，试试「加载更多」后搜索";
+    els.state.textContent = t.noMatch;
   }
 
   const moreWrap = els.moreWrap;
   if (state.continuation) {
     moreWrap.classList.remove("hidden");
     els.more.disabled = state.loading;
-    els.more.textContent = state.loading ? "加载中…" : "加载更多";
+    els.more.textContent = state.loading ? t.loading : t.more;
   } else {
     moreWrap.classList.add("hidden");
   }
@@ -428,7 +539,7 @@ els.list.addEventListener("click", (e) => {
 els.more.addEventListener("click", async () => {
   if (state.loading) return;
   setLoading(true);
-  els.more.textContent = "加载中…";
+  els.more.textContent = t.loading;
   try {
     await loadMore();
   } catch (err) {
@@ -466,8 +577,8 @@ const init = async (isRefresh) => {
   } catch (err) {
     console.warn("[TubeLoft] history fetch failed:", err);
     els.state.innerHTML =
-      `<span class="vd-err">加载失败：${esc(err.message)}</span><br>` +
-      "请检查网络或 YouTube 登录状态<button>重试</button>";
+      `<span class="vd-err">${t.err}: ${esc(err.message)}</span><br>` +
+      `<button>${t.retry}</button>`;
     els.state.querySelector("button").addEventListener("click", () => init(true));
     els.list.innerHTML = "";
     els.moreWrap.classList.add("hidden");
@@ -477,7 +588,9 @@ const init = async (isRefresh) => {
   }
   setLoading(false);
   render();
+  applyStrings();
   loadAccount().then(renderAccount);
 };
 
 init(false);
+applyCachedLanguage();

@@ -93,6 +93,30 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
   });
 }
 
+// Record YouTube's interface language so the history popup can render its
+// UI in the same language instantly, without waiting for its own fetch.
+// YouTube reloads the whole page on language switches, so one read per page
+// load stays current.
+(function recordSiteLanguage() {
+  var save = function () {
+    var lang = document.documentElement && document.documentElement.lang;
+    if (!lang) return;
+    try {
+      chrome.storage.local.get("vdSiteLang", function (stored) {
+        if (chrome.runtime.lastError) return;
+        if (stored && stored.vdSiteLang === lang) return;
+        chrome.storage.local.set({ vdSiteLang: lang }, function () {
+          void chrome.runtime.lastError;
+        });
+      });
+    } catch (e) { /* storage unavailable */ }
+  };
+  save();
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", save, { once: true });
+  }
+})();
+
 // ---------------------------------------------------------------------------
 // Attribution: the code below derives from the MIT-licensed userscript
 // "YouTube Improvements – Layout & Video Enhancer" v1.1.5 by Thalrien.vx
@@ -1241,6 +1265,84 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
     }, 600);
   })();
 
+  // Back-to-top button. YouTube has no native way to jump back up after
+  // scrolling deep into a feed, so add a floating button. Default spot is
+  // the page's bottom-right corner; when the miniplayer is up it parks
+  // directly above it instead. Hidden near the top of the page.
+  (() => {
+    if (!/youtube\.com/.test(window.location.host)) return;
+    GM_addStyle(`
+      #vd-backtop {
+        position: fixed;
+        right: 24px;
+        bottom: 24px;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 2200;
+        border: 1px solid var(--yt-sys-color-baseline--outline, var(--yt-spec-10-percent-layer, rgba(128, 128, 128, .25)));
+        background: var(--yt-sys-color-baseline--raised-background, var(--yt-spec-raised-background, #ffffff));
+        color: var(--yt-sys-color-baseline--text-primary, var(--yt-spec-text-primary, #0f0f0f));
+        box-shadow: 0 2px 10px rgba(0, 0, 0, .18);
+        opacity: 0;
+        transform: translateY(8px);
+        pointer-events: none;
+        transition: opacity .22s ease, transform .22s ease, background-color .2s ease;
+      }
+      #vd-backtop.vd-show { opacity: .92; transform: translateY(0); pointer-events: auto; }
+      #vd-backtop.vd-show:hover { opacity: 1; transform: translateY(-2px); }
+      #vd-backtop svg { width: 22px; height: 22px; fill: currentColor; }
+    `);
+    const btn = document.createElement("div");
+    btn.id = "vd-backtop";
+    btn.setAttribute("role", "button");
+    const titles = { zh: "回到顶部", ja: "一番上へ戻る", ko: "맨 위로" };
+    const base = (document.documentElement.lang || navigator.language || "").toLowerCase().split("-")[0];
+    btn.title = titles[base] || "Back to top";
+    btn.setAttribute("aria-label", btn.title);
+    btn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5 4.5 12l1.41 1.41L11 8.33V19.5h2V8.33l5.09 5.08L19.5 12 12 4.5z"/></svg>';
+    btn.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+    const miniplayerRect = () => {
+      const mp = document.querySelector(".ytdMiniplayerComponentHost, ytd-miniplayer");
+      if (!mp || mp.hasAttribute("hidden")) return null;
+      const r = mp.getBoundingClientRect();
+      return r.width > 0 && r.height > 0 ? r : null;
+    };
+    const update = () => {
+      if (!btn.isConnected) return;
+      const show = (window.scrollY || document.documentElement.scrollTop) > 400;
+      btn.classList.toggle("vd-show", show);
+      const r = show ? miniplayerRect() : null;
+      if (r) {
+        // park just above the miniplayer, right-aligned with it
+        btn.style.right = Math.max(8, window.innerWidth - r.right) + "px";
+        btn.style.bottom = Math.max(8, window.innerHeight - r.top + 12) + "px";
+      } else {
+        btn.style.right = "24px";
+        btn.style.bottom = "24px";
+      }
+    };
+    const mount = () => {
+      (document.body || document.documentElement).appendChild(btn);
+      update();
+    };
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", mount, { once: true });
+    } else {
+      mount();
+    }
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update, { passive: true });
+    // miniplayer show/hide is not a scroll/resize event — keep polling
+    setInterval(update, 800);
+  })();
+
   (async () => {
     if (isOpenThemeProgressBar) {
       ThemeProgressbar.start();
@@ -1273,6 +1375,39 @@ if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage)
       try {
         chrome.runtime.sendMessage({ type: "vd-engine-missing", url: location.href });
       } catch (e) { /* extension context invalidated — nothing to do */ }
+    }, 2000);
+  })();
+
+  // Post-update self-heal. When Chrome auto-updates (or toggles) the
+  // extension, content scripts in already-open tabs keep running but lose
+  // their extension context (chrome.runtime.id drops to undefined and every
+  // message channel dies). In that stale state this layer cannot be healed
+  // in place: background re-injection is bounced by the reinjection guards,
+  // so the page keeps limping on mismatched code — the classic "first video
+  // opened after an update shows a blank info tab" scenario. Detect the
+  // dead context and reload the page once (rate-limited) so the updated
+  // scripts attach to a fresh document; if the declared injection is missed
+  // even on the reload, background healTab covers it.
+  (() => {
+    const RELOAD_KEY = "vd-ctx-reload-ts";
+    const RELOAD_COOLDOWN_MS = 180000;
+    setInterval(() => {
+      try {
+        // Healthy context: runtime.id is a defined extension id.
+        if (chrome && chrome.runtime && chrome.runtime.id !== undefined) return;
+      } catch (e) {
+        return;
+      }
+      // Never interrupt active playback — defer until the player is paused.
+      try {
+        const v = document.querySelector("video");
+        if (v && !v.paused) return;
+      } catch (e) { /* ignore */ }
+      let last = 0;
+      try { last = Number(sessionStorage.getItem(RELOAD_KEY)) || 0; } catch (e) { /* ignore */ }
+      if (Date.now() - last < RELOAD_COOLDOWN_MS) return;
+      try { sessionStorage.setItem(RELOAD_KEY, String(Date.now())); } catch (e) { /* ignore */ }
+      location.reload();
     }, 2000);
   })();
 
