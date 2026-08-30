@@ -12,31 +12,31 @@ const HISTORY_URL = "https://www.youtube.com/feed/history";
 /* ── UI strings: follow YouTube's own language ───────────── */
 
 const STRINGS = {
-  en:     { title: "History", count: (n) => `${n} items`, search: "Search loaded items…", more: "Show more", loading: "Loading…", empty: "No watch history", noMatch: "No matches in loaded items — try \"Show more\" first", signedOut: "Not signed in to YouTube<br>Please sign in to YouTube, then refresh", err: "Failed to load", retry: "Retry", refresh: "Refresh" },
-  "zh-CN": { title: "观看记录", count: (n) => `${n} 条`, search: "搜索已加载的记录…", more: "加载更多", loading: "加载中…", empty: "没有观看记录", noMatch: "已加载的记录中没有匹配项，试试「加载更多」后搜索", signedOut: "未检测到 YouTube 登录状态<br>请先在浏览器中登录 YouTube，再点击刷新", err: "加载失败", retry: "重试", refresh: "刷新" },
-  "zh-TW": { title: "觀看紀錄", count: (n) => `${n} 部`, search: "搜尋已載入的記錄…", more: "顯示更多", loading: "載入中…", empty: "沒有觀看紀錄", noMatch: "已載入的記錄中沒有相符項目，請試試「顯示更多」後再搜尋", signedOut: "未偵測到 YouTube 登入狀態<br>請先在瀏覽器中登入 YouTube，再重新整理", err: "載入失敗", retry: "重試", refresh: "重新整理" },
-  ja:     { title: "履歴", count: (n) => `${n} 件`, search: "読み込んだ履歴を検索…", more: "もっと見る", loading: "読み込み中…", empty: "視聴履歴がありません", noMatch: "読み込んだ履歴に一致するものはありません。「もっと見る」の後にもう一度お試しください", signedOut: "YouTube にログインしていません<br>ブラウザで YouTube にログインしてから再読み込みしてください", err: "読み込みに失敗しました", retry: "再試行", refresh: "再読み込み" },
-  ko:     { title: "시청 기록", count: (n) => `${n}개`, search: "불러온 기록 검색…", more: "더보기", loading: "불러오는 중…", empty: "시청 기록이 없습니다", noMatch: "불러온 기록에 일치하는 항목이 없습니다. '더보기'를 누른 후 다시 검색해 보세요", signedOut: "YouTube 로그인 상태가 아닙니다<br>브라우저에서 YouTube에 로그인한 후 새로고침해 주세요", err: "불러오기 실패", retry: "다시 시도", refresh: "새로고침" },
-  es:     { title: "Historial", count: (n) => `${n} elementos`, search: "Buscar en lo cargado…", more: "Mostrar más", loading: "Cargando…", empty: "No hay historial de visualizaciones", noMatch: "Sin coincidencias en lo cargado: prueba «Mostrar más» y vuelve a buscar", signedOut: "No has iniciado sesión en YouTube<br>Inicia sesión en YouTube y actualiza", err: "Error al cargar", retry: "Reintentar", refresh: "Actualizar" },
-  "es-419": { title: "Historial", count: (n) => `${n} elementos`, search: "Buscar en lo cargado…", more: "Mostrar más", loading: "Cargando…", empty: "No hay historial de visualizaciones", noMatch: "Sin coincidencias en lo cargado: prueba «Mostrar más» y vuelve a buscar", signedOut: "No iniciaste sesión en YouTube<br>Inicia sesión en YouTube y vuelve a intentar", err: "Error al cargar", retry: "Reintentar", refresh: "Actualizar" },
-  pt:     { title: "Histórico", count: (n) => `${n} itens`, search: "Pesquisar no que foi carregado…", more: "Mostrar mais", loading: "Carregando…", empty: "Sem histórico de exibição", noMatch: "Sem correspondências no que foi carregado — tente «Mostrar mais» e pesquise de novo", signedOut: "Você não está conectado ao YouTube<br>Faça login no YouTube e atualize", err: "Falha ao carregar", retry: "Tentar novamente", refresh: "Atualizar" },
-  "pt-PT": { title: "Histórico", count: (n) => `${n} itens`, search: "Pesquisar no que foi carregado…", more: "Mostrar mais", loading: "A carregar…", empty: "Sem histórico de visualizações", noMatch: "Sem correspondências no que foi carregado — tente «Mostrar mais» e pesquise de novo", signedOut: "Não tem sessão iniciada no YouTube<br>Inicie sessão no YouTube e atualize", err: "Falha ao carregar", retry: "Tentar novamente", refresh: "Atualizar" },
-  fr:     { title: "Historique", count: (n) => `${n} éléments`, search: "Rechercher dans l’historique chargé…", more: "Afficher plus", loading: "Chargement…", empty: "Aucun historique des vidéos regardées", noMatch: "Aucun résultat dans l’historique chargé — essayez « Afficher plus », puis relancez la recherche", signedOut: "Aucune session YouTube détectée<br>Connectez-vous à YouTube, puis actualisez", err: "Échec du chargement", retry: "Réessayer", refresh: "Actualiser" },
-  de:     { title: "Verlauf", count: (n) => `${n} Einträge`, search: "Geladene Einträge durchsuchen…", more: "Mehr laden", loading: "Wird geladen…", empty: "Kein Wiedergabeverlauf", noMatch: "Keine Treffer in den geladenen Einträgen — lade mehr und versuche es erneut", signedOut: "Keine YouTube-Anmeldung erkannt<br>Melde dich im Browser bei YouTube an und aktualisiere", err: "Laden fehlgeschlagen", retry: "Erneut versuchen", refresh: "Aktualisieren" },
-  it:     { title: "Cronologia", count: (n) => `${n} elementi`, search: "Cerca negli elementi caricati…", more: "Mostra altro", loading: "Caricamento…", empty: "Nessuna cronologia delle visualizzazioni", noMatch: "Nessuna corrispondenza negli elementi caricati: prova «Mostra altro» e riprova", signedOut: "Accesso a YouTube non rilevato<br>Accedi a YouTube e aggiorna", err: "Caricamento non riuscito", retry: "Riprova", refresh: "Aggiorna" },
-  ru:     { title: "История", count: (n) => `${n} эл.`, search: "Поиск в загруженных записях…", more: "Показать ещё", loading: "Загрузка…", empty: "Нет истории просмотров", noMatch: "Совпадений нет. Нажмите «Показать ещё» и повторите поиск", signedOut: "Вы не вошли в YouTube<br>Войдите в YouTube в браузере и обновите", err: "Не удалось загрузить", retry: "Повторить", refresh: "Обновить" },
-  uk:     { title: "Історія", count: (n) => `${n} ел.`, search: "Пошук серед завантажених записів…", more: "Показати більше", loading: "Завантаження…", empty: "Немає історії переглядів", noMatch: "Збігів немає. Натисніть «Показати більше» та повторіть пошук", signedOut: "Виявлено вхід у YouTube відсутнім<br>Увійдіть в YouTube і оновіть", err: "Не вдалося завантажити", retry: "Повторити", refresh: "Оновити" },
-  pl:     { title: "Historia", count: (n) => `${n} elem.`, search: "Szukaj w załadowanych…", more: "Pokaż więcej", loading: "Ładowanie…", empty: "Brak historii oglądania", noMatch: "Brak wyników wśród załadowanych — kliknij «Pokaż więcej» i spróbuj ponownie", signedOut: "Nie wykryto zalogowania do YouTube<br>Zaloguj się w YouTube i odśwież", err: "Nie udało się załadować", retry: "Spróbuj ponownie", refresh: "Odśwież" },
-  nl:     { title: "Geschiedenis", count: (n) => `${n} items`, search: "Zoeken in geladen items…", more: "Meer laden", loading: "Laden…", empty: "Geen kijkgeschiedenis", noMatch: "Geen overeenkomsten — laad meer en probeer opnieuw", signedOut: "Niet ingelogd op YouTube<br>Log in bij YouTube en vernieuw", err: "Laden mislukt", retry: "Opnieuw proberen", refresh: "Vernieuwen" },
-  tr:     { title: "Geçmiş", count: (n) => `${n} öğe`, search: "Yüklenenlerde ara…", more: "Daha fazla göster", loading: "Yükleniyor…", empty: "İzleme geçmişi yok", noMatch: "Eşleşme yok. «Daha fazla göster»e tıklayıp tekrar deneyin", signedOut: "YouTube oturumu algılanmadı<br>Tarayıcıda YouTube'a giriş yapıp yenileyin", err: "Yüklenemedi", retry: "Tekrar dene", refresh: "Yenile" },
-  ar:     { title: "السجلّ", count: (n) => `${n} عنصرًا`, search: "البحث في العناصر المحمّلة…", more: "عرض المزيد", loading: "جارٍ التحميل…", empty: "لا يوجد سجلّ مشاهدة", noMatch: "لا نتائج مطابقة، جرّب «عرض المزيد» ثم ابحث مجددًا", signedOut: "لم يتم رصد تسجيل الدخول إلى YouTube<br>سجّل الدخول إلى YouTube ثم أعد التحميل", err: "فشل التحميل", retry: "إعادة المحاولة", refresh: "تحديث" },
-  hi:     { title: "इतिहास", count: (n) => `${n} आइटम`, search: "लोड किए गए आइटम खोजें…", more: "और दिखाएं", loading: "लोड हो रहा है…", empty: "कोई देखने का इतिहास नहीं", noMatch: "कोई मेल नहीं मिला — «और दिखाएं» पर क्लिक करके फिर खोजें", signedOut: "YouTube साइन-इन स्थिति नहीं मिली<br>ब्राउज़र में YouTube में साइन इन करके रीफ़्रेश करें", err: "लोड नहीं हो सका", retry: "फिर कोशिश करें", refresh: "रीफ़्रेश करें" },
-  th:     { title: "ประวัติ", count: (n) => `${n} รายการ`, search: "ค้นหารายการที่โหลดแล้ว…", more: "แสดงเพิ่มเติม", loading: "กำลังโหลด…", empty: "ไม่มีประวัติการดู", noMatch: "ไม่พบรายการที่ตรงกัน ลองคลิก «แสดงเพิ่มเติม» แล้วค้นหาอีกครั้ง", signedOut: "ไม่พบการลงชื่อเข้าใช้ YouTube<br>กรุณาลงชื่อเข้าใช้ YouTube แล้วรีเฟรช", err: "โหลดไม่สำเร็จ", retry: "ลองอีกครั้ง", refresh: "รีเฟรช" },
-  vi:     { title: "Nhật ký", count: (n) => `${n} mục`, search: "Tìm trong các mục đã tải…", more: "Xem thêm", loading: "Đang tải…", empty: "Không có nhật ký xem", noMatch: "Không có kết quả phù hợp — thử «Xem thêm» rồi tìm lại", signedOut: "Chưa phát hiện đăng nhập YouTube<br>Hãy đăng nhập YouTube rồi tải lại", err: "Không tải được", retry: "Thử lại", refresh: "Tải lại" },
-  id:     { title: "Histori", count: (n) => `${n} item`, search: "Telusuri item yang dimuat…", more: "Tampilkan lainnya", loading: "Memuat…", empty: "Tidak ada histori tontonan", noMatch: "Tidak ada yang cocok — coba «Tampilkan lainnya» lalu cari lagi", signedOut: "Belum login ke YouTube<br>Login ke YouTube lalu muat ulang", err: "Gagal memuat", retry: "Coba lagi", refresh: "Muat ulang" },
-  ms:     { title: "Sejarah", count: (n) => `${n} item`, search: "Cari item yang dimuatkan…", more: "Tunjukkan lagi", loading: "Memuatkan…", empty: "Tiada sejarah tontonan", noMatch: "Tiada padanan — cuba «Tunjukkan lagi» dan cari semula", signedOut: "Tiada log masuk YouTube dikesan<br>Log masuk ke YouTube kemudian muat semula", err: "Gagal memuatkan", retry: "Cuba semula", refresh: "Muat semula" },
-  "zh-HK": { title: "觀看記錄", count: (n) => `${n} 部影片`, search: "搜尋已載入的記錄…", more: "顯示更多", loading: "載入中…", empty: "沒有觀看記錄", noMatch: "已載入的記錄沒有相符項目，請按「顯示更多」後再試", signedOut: "未偵測到 YouTube 登入狀態<br>請先在瀏覽器登入 YouTube，然後重新整理", err: "載入失敗", retry: "重試", refresh: "重新整理" },
-  "pt-BR": { title: "Histórico", count: (n) => `${n} itens`, search: "Pesquisar no que foi carregado…", more: "Mostrar mais", loading: "Carregando…", empty: "Sem histórico de exibição", noMatch: "Sem correspondências no que foi carregado — tente «Mostrar mais» e pesquise de novo", signedOut: "Você não está conectado ao YouTube<br>Faça login no YouTube e atualize", err: "Falha ao carregar", retry: "Tentar novamente", refresh: "Atualizar" }
+  en:     { title: "History", all: "All", count: (n) => `${n} items`, search: "Search loaded items…", more: "Show more", loading: "Loading…", empty: "No watch history", noMatch: "No matches in loaded items — try \"Show more\" first", signedOut: "Not signed in to YouTube<br>Please sign in to YouTube, then refresh", err: "Failed to load", retry: "Retry", refresh: "Refresh" },
+  "zh-CN": { title: "观看记录", all: "全部", count: (n) => `${n} 条`, search: "搜索已加载的记录…", more: "加载更多", loading: "加载中…", empty: "没有观看记录", noMatch: "已加载的记录中没有匹配项，试试「加载更多」后搜索", signedOut: "未检测到 YouTube 登录状态<br>请先在浏览器中登录 YouTube，再点击刷新", err: "加载失败", retry: "重试", refresh: "刷新" },
+  "zh-TW": { title: "觀看紀錄", all: "全部", count: (n) => `${n} 部`, search: "搜尋已載入的記錄…", more: "顯示更多", loading: "載入中…", empty: "沒有觀看紀錄", noMatch: "已載入的記錄中沒有相符項目，請試試「顯示更多」後再搜尋", signedOut: "未偵測到 YouTube 登入狀態<br>請先在瀏覽器中登入 YouTube，再重新整理", err: "載入失敗", retry: "重試", refresh: "重新整理" },
+  ja:     { title: "履歴", all: "すべて", count: (n) => `${n} 件`, search: "読み込んだ履歴を検索…", more: "もっと見る", loading: "読み込み中…", empty: "視聴履歴がありません", noMatch: "読み込んだ履歴に一致するものはありません。「もっと見る」の後にもう一度お試しください", signedOut: "YouTube にログインしていません<br>ブラウザで YouTube にログインしてから再読み込みしてください", err: "読み込みに失敗しました", retry: "再試行", refresh: "再読み込み" },
+  ko:     { title: "시청 기록", all: "전체", count: (n) => `${n}개`, search: "불러온 기록 검색…", more: "더보기", loading: "불러오는 중…", empty: "시청 기록이 없습니다", noMatch: "불러온 기록에 일치하는 항목이 없습니다. '더보기'를 누른 후 다시 검색해 보세요", signedOut: "YouTube 로그인 상태가 아닙니다<br>브라우저에서 YouTube에 로그인한 후 새로고침해 주세요", err: "불러오기 실패", retry: "다시 시도", refresh: "새로고침" },
+  es:     { title: "Historial", all: "Todos", count: (n) => `${n} elementos`, search: "Buscar en lo cargado…", more: "Mostrar más", loading: "Cargando…", empty: "No hay historial de visualizaciones", noMatch: "Sin coincidencias en lo cargado: prueba «Mostrar más» y vuelve a buscar", signedOut: "No has iniciado sesión en YouTube<br>Inicia sesión en YouTube y actualiza", err: "Error al cargar", retry: "Reintentar", refresh: "Actualizar" },
+  "es-419": { title: "Historial", all: "Todos", count: (n) => `${n} elementos`, search: "Buscar en lo cargado…", more: "Mostrar más", loading: "Cargando…", empty: "No hay historial de visualizaciones", noMatch: "Sin coincidencias en lo cargado: prueba «Mostrar más» y vuelve a buscar", signedOut: "No iniciaste sesión en YouTube<br>Inicia sesión en YouTube y vuelve a intentar", err: "Error al cargar", retry: "Reintentar", refresh: "Actualizar" },
+  pt:     { title: "Histórico", all: "Todos", count: (n) => `${n} itens`, search: "Pesquisar no que foi carregado…", more: "Mostrar mais", loading: "Carregando…", empty: "Sem histórico de exibição", noMatch: "Sem correspondências no que foi carregado — tente «Mostrar mais» e pesquise de novo", signedOut: "Você não está conectado ao YouTube<br>Faça login no YouTube e atualize", err: "Falha ao carregar", retry: "Tentar novamente", refresh: "Atualizar" },
+  "pt-PT": { title: "Histórico", all: "Todos", count: (n) => `${n} itens`, search: "Pesquisar no que foi carregado…", more: "Mostrar mais", loading: "A carregar…", empty: "Sem histórico de visualizações", noMatch: "Sem correspondências no que foi carregado — tente «Mostrar mais» e pesquise de novo", signedOut: "Não tem sessão iniciada no YouTube<br>Inicie sessão no YouTube e atualize", err: "Falha ao carregar", retry: "Tentar novamente", refresh: "Atualizar" },
+  fr:     { title: "Historique", all: "Tous", count: (n) => `${n} éléments`, search: "Rechercher dans l’historique chargé…", more: "Afficher plus", loading: "Chargement…", empty: "Aucun historique des vidéos regardées", noMatch: "Aucun résultat dans l’historique chargé — essayez « Afficher plus », puis relancez la recherche", signedOut: "Aucune session YouTube détectée<br>Connectez-vous à YouTube, puis actualisez", err: "Échec du chargement", retry: "Réessayer", refresh: "Actualiser" },
+  de:     { title: "Verlauf", all: "Alle", count: (n) => `${n} Einträge`, search: "Geladene Einträge durchsuchen…", more: "Mehr laden", loading: "Wird geladen…", empty: "Kein Wiedergabeverlauf", noMatch: "Keine Treffer in den geladenen Einträgen — lade mehr und versuche es erneut", signedOut: "Keine YouTube-Anmeldung erkannt<br>Melde dich im Browser bei YouTube an und aktualisiere", err: "Laden fehlgeschlagen", retry: "Erneut versuchen", refresh: "Aktualisieren" },
+  it:     { title: "Cronologia", all: "Tutti", count: (n) => `${n} elementi`, search: "Cerca negli elementi caricati…", more: "Mostra altro", loading: "Caricamento…", empty: "Nessuna cronologia delle visualizzazioni", noMatch: "Nessuna corrispondenza negli elementi caricati: prova «Mostra altro» e riprova", signedOut: "Accesso a YouTube non rilevato<br>Accedi a YouTube e aggiorna", err: "Caricamento non riuscito", retry: "Riprova", refresh: "Aggiorna" },
+  ru:     { title: "История", all: "Все", count: (n) => `${n} эл.`, search: "Поиск в загруженных записях…", more: "Показать ещё", loading: "Загрузка…", empty: "Нет истории просмотров", noMatch: "Совпадений нет. Нажмите «Показать ещё» и повторите поиск", signedOut: "Вы не вошли в YouTube<br>Войдите в YouTube в браузере и обновите", err: "Не удалось загрузить", retry: "Повторить", refresh: "Обновить" },
+  uk:     { title: "Історія", all: "Усі", count: (n) => `${n} ел.`, search: "Пошук серед завантажених записів…", more: "Показати більше", loading: "Завантаження…", empty: "Немає історії переглядів", noMatch: "Збігів немає. Натисніть «Показати більше» та повторіть пошук", signedOut: "Виявлено вхід у YouTube відсутнім<br>Увійдіть в YouTube і оновіть", err: "Не вдалося завантажити", retry: "Повторити", refresh: "Оновити" },
+  pl:     { title: "Historia", all: "Wszystkie", count: (n) => `${n} elem.`, search: "Szukaj w załadowanych…", more: "Pokaż więcej", loading: "Ładowanie…", empty: "Brak historii oglądania", noMatch: "Brak wyników wśród załadowanych — kliknij «Pokaż więcej» i spróbuj ponownie", signedOut: "Nie wykryto zalogowania do YouTube<br>Zaloguj się w YouTube i odśwież", err: "Nie udało się załadować", retry: "Spróbuj ponownie", refresh: "Odśwież" },
+  nl:     { title: "Geschiedenis", all: "Alle", count: (n) => `${n} items`, search: "Zoeken in geladen items…", more: "Meer laden", loading: "Laden…", empty: "Geen kijkgeschiedenis", noMatch: "Geen overeenkomsten — laad meer en probeer opnieuw", signedOut: "Niet ingelogd op YouTube<br>Log in bij YouTube en vernieuw", err: "Laden mislukt", retry: "Opnieuw proberen", refresh: "Vernieuwen" },
+  tr:     { title: "Geçmiş", all: "Tümü", count: (n) => `${n} öğe`, search: "Yüklenenlerde ara…", more: "Daha fazla göster", loading: "Yükleniyor…", empty: "İzleme geçmişi yok", noMatch: "Eşleşme yok. «Daha fazla göster»e tıklayıp tekrar deneyin", signedOut: "YouTube oturumu algılanmadı<br>Tarayıcıda YouTube'a giriş yapıp yenileyin", err: "Yüklenemedi", retry: "Tekrar dene", refresh: "Yenile" },
+  ar:     { title: "السجلّ", all: "الكل", count: (n) => `${n} عنصرًا`, search: "البحث في العناصر المحمّلة…", more: "عرض المزيد", loading: "جارٍ التحميل…", empty: "لا يوجد سجلّ مشاهدة", noMatch: "لا نتائج مطابقة، جرّب «عرض المزيد» ثم ابحث مجددًا", signedOut: "لم يتم رصد تسجيل الدخول إلى YouTube<br>سجّل الدخول إلى YouTube ثم أعد التحميل", err: "فشل التحميل", retry: "إعادة المحاولة", refresh: "تحديث" },
+  hi:     { title: "इतिहास", all: "सभी", count: (n) => `${n} आइटम`, search: "लोड किए गए आइटम खोजें…", more: "और दिखाएं", loading: "लोड हो रहा है…", empty: "कोई देखने का इतिहास नहीं", noMatch: "कोई मेल नहीं मिला — «और दिखाएं» पर क्लिक करके फिर खोजें", signedOut: "YouTube साइन-इन स्थिति नहीं मिली<br>ब्राउज़र में YouTube में साइन इन करके रीफ़्रेश करें", err: "लोड नहीं हो सका", retry: "फिर कोशिश करें", refresh: "रीफ़्रेश करें" },
+  th:     { title: "ประวัติ", all: "ทั้งหมด", count: (n) => `${n} รายการ`, search: "ค้นหารายการที่โหลดแล้ว…", more: "แสดงเพิ่มเติม", loading: "กำลังโหลด…", empty: "ไม่มีประวัติการดู", noMatch: "ไม่พบรายการที่ตรงกัน ลองคลิก «แสดงเพิ่มเติม» แล้วค้นหาอีกครั้ง", signedOut: "ไม่พบการลงชื่อเข้าใช้ YouTube<br>กรุณาลงชื่อเข้าใช้ YouTube แล้วรีเฟรช", err: "โหลดไม่สำเร็จ", retry: "ลองอีกครั้ง", refresh: "รีเฟรช" },
+  vi:     { title: "Nhật ký", all: "Tất cả", count: (n) => `${n} mục`, search: "Tìm trong các mục đã tải…", more: "Xem thêm", loading: "Đang tải…", empty: "Không có nhật ký xem", noMatch: "Không có kết quả phù hợp — thử «Xem thêm» rồi tìm lại", signedOut: "Chưa phát hiện đăng nhập YouTube<br>Hãy đăng nhập YouTube rồi tải lại", err: "Không tải được", retry: "Thử lại", refresh: "Tải lại" },
+  id:     { title: "Histori", all: "Semua", count: (n) => `${n} item`, search: "Telusuri item yang dimuat…", more: "Tampilkan lainnya", loading: "Memuat…", empty: "Tidak ada histori tontonan", noMatch: "Tidak ada yang cocok — coba «Tampilkan lainnya» lalu cari lagi", signedOut: "Belum login ke YouTube<br>Login ke YouTube lalu muat ulang", err: "Gagal memuat", retry: "Coba lagi", refresh: "Muat ulang" },
+  ms:     { title: "Sejarah", all: "Semua", count: (n) => `${n} item`, search: "Cari item yang dimuatkan…", more: "Tunjukkan lagi", loading: "Memuatkan…", empty: "Tiada sejarah tontonan", noMatch: "Tiada padanan — cuba «Tunjukkan lagi» dan cari semula", signedOut: "Tiada log masuk YouTube dikesan<br>Log masuk ke YouTube kemudian muat semula", err: "Gagal memuatkan", retry: "Cuba semula", refresh: "Muat semula" },
+  "zh-HK": { title: "觀看記錄", all: "全部", count: (n) => `${n} 部影片`, search: "搜尋已載入的記錄…", more: "顯示更多", loading: "載入中…", empty: "沒有觀看記錄", noMatch: "已載入的記錄沒有相符項目，請按「顯示更多」後再試", signedOut: "未偵測到 YouTube 登入狀態<br>請先在瀏覽器登入 YouTube，然後重新整理", err: "載入失敗", retry: "重試", refresh: "重新整理" },
+  "pt-BR": { title: "Histórico", all: "Todos", count: (n) => `${n} itens`, search: "Pesquisar no que foi carregado…", more: "Mostrar mais", loading: "Carregando…", empty: "Sem histórico de exibição", noMatch: "Sem correspondências no que foi carregado — tente «Mostrar mais» e pesquise de novo", signedOut: "Você não está conectado ao YouTube<br>Faça login no YouTube e atualize", err: "Falha ao carregar", retry: "Tentar novamente", refresh: "Atualizar" }
 };
 
 /* matches YouTube's own hl codes, including variants like "en-IN", "fr-CA" */
@@ -115,6 +115,10 @@ const els = {
   more: document.getElementById("vd-more"),
   refresh: document.getElementById("vd-refresh"),
   search: document.getElementById("vd-search-input"),
+  chips: document.getElementById("vd-chips"),
+  chipsWrap: document.getElementById("vd-chips-wrap"),
+  chipsPrev: document.getElementById("vd-chips-prev"),
+  chipsNext: document.getElementById("vd-chips-next"),
   avatar: document.getElementById("vd-avatar"),
   account: document.getElementById("vd-account"),
   fallbackDot: document.getElementById("vd-fallback-dot")
@@ -130,6 +134,8 @@ const state = {
   gl: "",
   historyLabel: "",
   query: "",
+  channel: "",
+  chipsKey: "",
   loading: false,
   signedOut: false,
   account: { name: "", avatar: "", email: "" }
@@ -472,19 +478,80 @@ const skeleton = (n) =>
       <div class="b-lines"><div class="bar b-line"></div><div class="bar b-line short"></div></div>
     </div>`).join("");
 
+/* show edge fade + arrows only when the chip row actually overflows */
+const CHIP_SLACK = 24; /* px of scroll slack before the back-arrow appears */
+const updateChipsNav = () => {
+  if (els.chips.classList.contains("hidden")) {
+    els.chipsWrap.classList.remove("has-more");
+    els.chipsPrev.classList.add("hidden");
+    els.chipsNext.classList.add("hidden");
+    return;
+  }
+  const max = els.chips.scrollWidth - els.chips.clientWidth;
+  const over = max > 4;
+  els.chipsWrap.classList.toggle("has-more", over && els.chips.scrollLeft < max - 4);
+  els.chipsPrev.classList.toggle("hidden", els.chips.scrollLeft <= CHIP_SLACK);
+  els.chipsNext.classList.toggle("hidden", !over || els.chips.scrollLeft >= max - CHIP_SLACK);
+};
+
+/* horizontal channel filter chips, rebuilt only when the item set changes */
+const renderChips = () => {
+  const counts = new Map();
+  for (const it of state.items) {
+    if (it.channel) counts.set(it.channel, (counts.get(it.channel) || 0) + 1);
+  }
+  const key = [...counts.entries()].map(([c, n]) => c + "\0" + n).join("\1");
+  if (key === state.chipsKey) {
+    // same item set: just sync the selected state (e.g. after chip clicks)
+    for (const el of els.chips.querySelectorAll(".vd-chip")) {
+      el.classList.toggle("on", (el.dataset.c || "") === state.channel);
+    }
+    return;
+  }
+  state.chipsKey = key;
+  if (counts.size < 2) {
+    els.chips.innerHTML = "";
+    els.chips.classList.add("hidden");
+    state.channel = "";
+    updateChipsNav();
+    return;
+  }
+  // most-watched channels first, capped so the chip row stays manageable
+  const top = [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 24);
+  if (state.channel && !counts.has(state.channel)) state.channel = "";
+  els.chips.innerHTML =
+    `<button class="vd-chip${state.channel ? "" : " on"}" data-c="">${esc(t.all)}</button>` +
+    top.map(([c, n]) =>
+      `<button class="vd-chip${state.channel === c ? " on" : ""}" data-c="${esc(c)}" title="${esc(c)}">${esc(c)} <span class="vd-chip-n">${n}</span></button>`
+    ).join("");
+  els.chips.classList.remove("hidden");
+  requestAnimationFrame(updateChipsNav);
+};
+
 const render = () => {
   const q = state.query.trim().toLowerCase();
-  const visible = q
-    ? state.items.filter(
-        (it) =>
-          it.title.toLowerCase().includes(q) ||
-          it.channel.toLowerCase().includes(q)
-      )
+  let visible = state.channel
+    ? state.items.filter((it) => it.channel === state.channel)
     : state.items;
+  if (q) {
+    visible = visible.filter(
+      (it) =>
+        it.title.toLowerCase().includes(q) ||
+        it.channel.toLowerCase().includes(q)
+    );
+  }
 
-  els.count.textContent = state.items.length ? t.count(state.items.length) : "";
+  const filtered = q || state.channel;
+  els.count.textContent = state.items.length
+    ? filtered
+      ? `${visible.length} / ${state.items.length}`
+      : t.count(state.items.length)
+    : "";
 
   if (state.items.length === 0) {
+    els.chips.innerHTML = "";
+    els.chips.classList.add("hidden");
+    state.chipsKey = "";
     els.list.innerHTML = "";
     els.moreWrap.classList.add("hidden");
     if (state.signedOut) {
@@ -495,9 +562,10 @@ const render = () => {
     return;
   }
 
+  renderChips();
   els.state.textContent = "";
   els.list.innerHTML = visible.map(itemHtml).join("");
-  if (q && visible.length === 0) {
+  if (filtered && visible.length === 0) {
     els.state.textContent = t.noMatch;
   }
 
@@ -523,6 +591,25 @@ const setLoading = (on) => {
 };
 
 /* ── events ──────────────────────────────────────────────── */
+
+els.chips.addEventListener("click", (e) => {
+  const chip = e.target.closest(".vd-chip");
+  if (!chip) return;
+  state.channel = chip.dataset.c || "";
+  render();
+  chip.scrollIntoView({ behavior: "smooth", inline: "nearest", block: "nearest" });
+});
+els.chips.addEventListener("scroll", updateChipsNav, { passive: true });
+/* vertical mouse wheel scrolls the chip row horizontally */
+els.chips.addEventListener("wheel", (e) => {
+  if (els.chips.scrollWidth <= els.chips.clientWidth) return;
+  e.preventDefault();
+  const d = e.deltaMode === 1 ? e.deltaY * 40 : e.deltaY;
+  els.chips.scrollLeft += d + e.deltaX;
+  updateChipsNav();
+}, { passive: false });
+els.chipsPrev.addEventListener("click", () => els.chips.scrollBy({ left: -220, behavior: "smooth" }));
+els.chipsNext.addEventListener("click", () => els.chips.scrollBy({ left: 220, behavior: "smooth" }));
 
 els.list.addEventListener("click", (e) => {
   const item = e.target.closest(".vd-item");
@@ -570,6 +657,8 @@ const init = async (isRefresh) => {
     state.seen = new Set();
     state.continuation = null;
     state.signedOut = false;
+    state.channel = "";
+    state.chipsKey = "";
   }
   setLoading(true);
   try {
